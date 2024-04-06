@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import useDropDown from "./UseDropDown";
@@ -110,6 +110,7 @@ const Book_Appointment = () => {
     },
   ];
 
+  //const navigate = useNavigate();
   //select through gender options
   const genderOptions =[
     {gender: 'Male', value:'M'},
@@ -211,6 +212,9 @@ const Book_Appointment = () => {
       // formatted separately so they're not in an array
       const formatStart = format(event.start, 'yyyy-MM-dd HH:mm:ss');
       const formatEnd =format (event.start, 'yyyy-MM-dd HH:mm:ss');
+      // checking if a user is insured
+      const isInsured = insuranceName !== '' ? 1: 0;
+      console.log("Patient is insured: ", isInsured);
       const formData = {
         symptoms: selectedSymptoms,
         specializations: selectedSpecialization,
@@ -220,7 +224,8 @@ const Book_Appointment = () => {
         room: selectedRoom,
         ssn,
         medicalHistory,
-        insuranceName, 
+        insuranceName,
+        isInsured,
         phoneNumber,
         streetAddress,
         state,
@@ -239,8 +244,8 @@ const Book_Appointment = () => {
       console.log("Phone Number: ", phoneNumber);
       console.log("State: ", state);
       console.log("Zip Code: ", zipCode);
-      
       console.log(formData);
+      //navigate =('/dashboard-patient');
 
     }
     

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import {Link} from "react-router-dom"
+import {Link , useNavigate} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import './Prescription_Doctor.css'
@@ -9,8 +9,8 @@ import patient_icon from './pictures/patient.png'
 import calendar_icon from './pictures/calendar.png'
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-import CalendarComponent from './CalendarComponent'
-import format from "date-fns/format";
+import prescription from './pictures/prescription.png'
+import doctor_icon from './pictures/doctor.png'
 
 
 const Prescription_Doctor = () => {
@@ -28,11 +28,16 @@ const Prescription_Doctor = () => {
       symptoms: ['Headache', 'Muscle aches', 'Fatigue']
     }
   ]
+    //const navigate = useNavigate();
     // setting selections
     const[selectedPatientObj ,setSelectedPatientObj] = useState(null);
     const[selectedFirstName, setSelectedFirstName] = useState('');
-    const[selectedLastName, setSelectedLastName] = useState('')
+    const[selectedLastName, setSelectedLastName] = useState('');
     const[selectedSymptoms, setSelectedSymptoms] =useState([]);
+    const[drug, setDrug] = useState('');
+    const[dosage, setDosage] = useState('');
+    const[fee, setFee] = useState('');
+    const[additionalNotes, setNotes] = useState('');
     
     // patient list  
     const patientDropDown = useDropDown();
@@ -71,45 +76,27 @@ const Prescription_Doctor = () => {
         return;
     }
       setFormSubmitted(true);
-  }  
-    {/*  // only one event
-      const event = calendarEvents[0];
-      // formatted separately so they're not in an array
-      const formatStart = format(event.start, 'yyyy-MM-dd HH:mm:ss');
-      const formatEnd =format (event.start, 'yyyy-MM-dd HH:mm:ss');
+    
+    
       const formData = {
-        symptoms: selectedSymptoms,
-        specializations: selectedSpecialization,
-        hospital: selectedHospitalObj?.hospital_id,
-        room: selectedRoom,
-        gender: selectedGender,
-        room: selectedRoom,
-        ssn,
-        medicalHistory,
-        insuranceName, 
-        phoneNumber,
-        streetAddress,
-        state,
-        zipCode,
-        startEvent: formatStart,
-        endEvent: formatEnd
-      };
+        patient: selectedPatientObj?.patient_id,
+        drug,
+        dosage,
+        fee,
+        additionalNotes,
+      }
       console.log("Information to be submitted...");
-      console.log("Symptom List: ", selectedSymptoms);
-      console.log("Hospital: ", selectedHospitalName);
-      console.log("Room: ", selectedRoom);
-      console.log("SSN: ", ssn);
-      console.log("Medical History: ", medicalHistory);
-      console.log("Insurance Name: ", insuranceName);
-      console.log("Street Address: ", streetAddress);
-      console.log("Phone Number: ", phoneNumber);
-      console.log("State: ", state);
-      console.log("Zip Code: ", zipCode);
       
+      console.log("First Name: ", selectedFirstName);
+      console.log("Last Name: ", selectedLastName);
+      console.log("Drug: ", drug);
+      console.log("Dosage: ", dosage);
+      console.log("Fee: ", fee);
+      console.log("Additional Notes: ", additionalNotes);
       console.log(formData);
+     // navigate('/dashboard-doctor');
 
-    }
-  */}
+    };
 
   //allows multiple symptom selections
   const handleSymptomSelect =(symptom_id) =>{
@@ -138,23 +125,23 @@ const Prescription_Doctor = () => {
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
-          <img className = "dashboard-icon" src={patient_icon}></img>
+          <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
           <p><a className= "dashboard-link" href="#">Patient Record</a></p>
           <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/book-appointment">Prescription</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
           <p><a className= "dashboard-link" href="#">Bill</a></p>
           <p><a className= "dashboard-link" href="#">Payment</a></p>
       </div>
       
-      <div className= "blue-container">
+      <div className= "gray-container">
             <div className = "first-header-container">
-              <div className = "blue-header">
+              <div className = "gray-header">
                 Prescription
               </div>
-                  <img className = "icon-match-header" src={calendar_icon}></img>
+                  <img className = "icon-match-header" src={prescription}></img>
               </div>
-              <p className= "blue-section-headers">Patient Information</p><br></br>
+              <p className= "gray-section-headers">Patient Information</p><br></br>
               <div className= "patient-info-bubbles">
               
                   <div className = "bubbles1">
@@ -224,26 +211,29 @@ const Prescription_Doctor = () => {
                   </div>
                   </div>
                       */}
-              <p className= "blue-section-headers">Prescription Drugs</p><br></br>
+              <p className= "gray-section-headers">Prescription Drugs</p><br></br>
               <div className= "patient-info-bubbles">
               
                   <div className = "bubbles1">
                     <p className="bubbles-header">
                       Name of Drug:
                     </p>
-                    <input className="insurance-bubble" type="text" name="insurance" pattern="^[A-Za-z &\-]+$" required />
+                    <input className="drug-bubble" type="text" name="drug" pattern="^[A-Za-z &\-]+$" required 
+                    onChange={(e) =>setDrug(e.target.value)}/>
                   </div>
                   <div className = "bubbles2">
                     <p className="bubbles-header">
                       Dosage:
                     </p>
-                    <input className="insurance-bubble" type="text" name="insurance" pattern="^[A-Za-z &\-]+$" required />
+                    <input className="dosage-bubble" type="text" name="dosage"  pattern="\d+\s?mg" required 
+                      onChange={(e) =>setDosage(e.target.value)}/>
                   </div>
                   <div className = "bubbles2">
                     <p className="bubbles-header">
                       Fee:
                     </p>
-                    <input className="insurance-bubble" type="text" name="insurance" pattern="^[A-Za-z &\-]+$" required />
+                    <input className="fee-bubble" type="text" name="dosage-fee" pattern="^(([1-9](\d*|\d{0,2}(,\d{3})*))|0)(\.\d{1,2})?$" required 
+                      onChange={(e) =>setFee(e.target.value)}/>
                   </div>
                 </div>
                   <div className= "patient-info-bubbles">
@@ -251,7 +241,8 @@ const Prescription_Doctor = () => {
                     <p className="bubbles-header">
                         Additional Notes:
                     </p>
-                    <input className="medical-history-bubble" type="text" name="history" pattern="^[a-zA-Z0-9._\s]{1,255}$" required/>
+                    <input className="additional-notes-bubble" type="text" name="history" pattern="^[a-zA-Z0-9._\s]{1,255}$" required
+                    onChange={(e) =>setNotes(e.target.value)}/>
                   </div>
                 
               </div>
@@ -259,13 +250,13 @@ const Prescription_Doctor = () => {
              
               
                           
-              <button className= "schedule-appt-button" onClick={(e) => handleSubmit(e)}>Schedule Appointment</button>
+              <button className= "prescrip-confirm-button" onClick={(e) => handleSubmit(e)}>Confirm</button>
               <p><a className= "dashboard-link" href="#">Go Back</a></p>
         </div>
     </div>
     </form>
  </div>  
     );
-};
+  };
 
 export default Prescription_Doctor;
