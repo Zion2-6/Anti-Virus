@@ -5,8 +5,6 @@ import './Book_Appointment.css'
 import './Prescription_Doctor.css'
 import useDropDown from "./UseDropDown";
 import caduceus from './pictures/caduceus.png'
-import patient_icon from './pictures/patient.png'
-import calendar_icon from './pictures/calendar.png'
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
 import prescription from './pictures/prescription.png'
@@ -127,11 +125,9 @@ const Prescription_Doctor = () => {
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><a className= "dashboard-link" href="#">Patient Record</a></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Appointments</Link></p>
           <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
-          <p><a className= "dashboard-link" href="#">Bill</a></p>
-          <p><a className= "dashboard-link" href="#">Payment</a></p>
       </div>
       
       <div className= "gray-container">

@@ -126,7 +126,7 @@ const Prescription_Patient = () => {
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={patient_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><a className= "dashboard-link" href="#">Patient Record</a></p>
+          <p><Link className= "dashboard-link" to="/dashboard-patient/patient-record">Patient Record</Link></p>
           <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
           <p><Link className= "dashboard-link" to="/dashboard-patient/prescription">Prescription</Link></p>
           <p><a className= "dashboard-link" href="#">Bill</a></p>
@@ -245,11 +245,6 @@ const Prescription_Patient = () => {
                   </div>
                 
               </div>
-
-             
-              
-                          
-              <button className= "prescrip-confirm-button" onClick={(e) => handleSubmit(e)}>Confirm</button>
               <p><a className= "dashboard-link" href="#">Go Back</a></p>
         </div>
     </div>

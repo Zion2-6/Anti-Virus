@@ -13,6 +13,9 @@ import CalendarComponent from "./components/CalendarComponent";
 import Home_Appointment from "./components/Home_Appointment";
 import Prescription_Doctor from "./components/Prescription_Doctor";
 import Prescription_Patient from "./components/Prescription_Patient";
+import Patient_Record_View_P from "./components/Patient_Record_View_P";
+import Patient_Record_View_D from "./components/Patient_Record_View_D";
+import Patient_Record_View_R from "./components/Patient_Record_View_R";
 function App() {
   return (
     <div className="App">
@@ -30,6 +33,9 @@ function App() {
         <Route path= "/book-appointment" element={<Home_Appointment/>}/>
         <Route path= "/dashboard-doctor/prescription" element={<Prescription_Doctor/>}/>
         <Route path= "/dashboard-patient/prescription" element={<Prescription_Patient/>}/>
+        <Route path= "/dashboard-doctor/patient-records" element={<Patient_Record_View_D/>}/>
+        <Route path= "/dashboard-patient/patient-record" element={<Patient_Record_View_P/>}/>
+        <Route path= "/dashboard-receptionist/patient-records" element={<Patient_Record_View_R/>}/>
       </Routes>
     </div>
   );
