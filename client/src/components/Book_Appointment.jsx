@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {Link, useNavigate} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
@@ -13,34 +13,7 @@ import format from "date-fns/format";
 
 
 const Book_Appointment = () => {
-  // fake values similar to database
-  const mockSymptoms = [
-    { symptom_id: 1, symptom_name: 'Fever' },
-    { symptom_id: 2, symptom_name: 'Diarrhea' },
-    { symptom_id: 3, symptom_name: 'Fatigue' },
-    { symptom_id: 4, symptom_name: 'Muscle aches' },
-    { symptom_id: 5, symptom_name: 'Wheezing' },
-    { symptom_id: 6, symptom_name: 'Depression' },
-    { symptom_id: 7, symptom_name: 'Headache' },
-    { symptom_id: 8, symptom_name: 'Cough' },
-    { symptom_id: 9, symptom_name: 'Sore throat' },
-    { symptom_id: 10, symptom_name: 'Nausea' },
-    { symptom_id: 11, symptom_name: 'Vomiting' },
-    { symptom_id: 12, symptom_name: 'Runny nose' },
-    { symptom_id: 13, symptom_name: 'Stuffy nose' },
-    { symptom_id: 14, symptom_name: 'Chest pain' },
-    { symptom_id: 15, symptom_name: 'Rash' },
-    { symptom_id: 16, symptom_name: 'Shortness of breath' },
-    { symptom_id: 17, symptom_name: 'Joint pain' },
-    { symptom_id: 18, symptom_name: 'Weight loss or gain' },
-    { symptom_id: 19, symptom_name: 'Difficult sleeping' },
-    { symptom_id: 20, symptom_name: 'Memory problems or confusion' },
-    { symptom_id: 21, symptom_name: 'Change in bowel movements' },
-    { symptom_id: 22, symptom_name: 'Pelvic pain' },
-    { symptom_id: 23, symptom_name: 'Dizziness' },
-    { symptom_id: 24, symptom_name: 'Sudden numbness' },
-  ];
-
+  
   const mockSpecializations = [
     { doctor_id: 1, specialization: 'General Medicine' },
     { doctor_id: 2, specialization: 'Orthopedics' },
@@ -56,59 +29,6 @@ const Book_Appointment = () => {
     { doctor_id: 12, specialization: 'Obstetrics and Gynecology' },
   ];
   
-  const mockHospitals = [
-    { 
-      hospital_id: 1000 , 
-      hospital_name: 'Northside Hospital', 
-      hospital_location:'1000 Johnson Ferry Rd NE, Atlanta' ,
-      rooms: [
-        { room_number: 100 },
-        { room_number: 101 },
-        { room_number: 102 },
-        { room_number: 103 },
-        { room_number: 104 },
-        { room_number: 200 },
-        { room_number: 201 },
-        { room_number: 202 },
-        { room_number: 203 },
-        { room_number: 204 }
-      ]
-    },
-    {
-      hospital_id: 1001 , 
-      hospital_name: 'St. Luke Baptist Hospital',
-      hospital_location: '7930 Floyd Curl Dr, Lawrenceville',
-      rooms: [
-        { room_number: 111 },
-        { room_number: 112 },
-        { room_number: 113 },
-        { room_number: 114 },
-        { room_number: 115 },
-        { room_number: 222 },
-        { room_number: 223 },
-        { room_number: 224 },
-        { room_number: 225 },
-        { room_number: 226 }
-      ]
-    },
-    {
-      hospital_id: 1002 , 
-      hospital_name: 'Emory Hospital', 
-      hospital_location: '6325 Hospital Pkwy, Johns Creek',
-      rooms: [
-        { room_number: 141 },
-        { room_number: 151 },
-        { room_number: 161 },
-        { room_number: 171 },
-        { room_number: 181 },
-        { room_number: 209 },
-        { room_number: 210 },
-        { room_number: 212 },
-        { room_number: 214 },
-        { room_number: 216 }
-      ]
-    },
-  ];
 
   //const navigate = useNavigate();
   //select through gender options
@@ -116,13 +36,10 @@ const Book_Appointment = () => {
     {gender: 'Male', value:'M'},
     {gender: 'Female', value: 'F'}
   ];
+  
   // setting selections
   const[selectedSymptoms, setSelectedSymptoms] =useState([]);
   const[selectedSpecialization, setSelectedSpecializations]=useState('');
-  const[selectedHospitalObj, setSelectedHospitalObj] =useState(null);
-  const[selectedHospitalName, setSelectedHospitalName] = useState('');
-  const[selectedLocation, setSelectedLocation] = useState('');
-  const[selectedRoom, setSelectedRoom] = useState([]);
   const[selectedGender, setSelectedGender] = useState('');
   // data for submitting book appointment
   const [ssn, setSSN] = useState('');
@@ -145,30 +62,67 @@ const Book_Appointment = () => {
   const handleGenderSelect = (value) =>{
     setSelectedGender(value);
   }
-  //alows only one hospital selection alongside with it's location at a time
-  const handleHospitalSelect = (hospital_id) => {
-    // variable assigned
-    // look through mockhospitals array to return element if same match with attribute
-    const chosenHospital = mockHospitals.find((hospital_obj) => 
-                           hospital_obj.hospital_id === hospital_id);
-    //debugging to ensure id is found
-    console.log(chosenHospital);
-    if(chosenHospital){
-      setSelectedHospitalObj(chosenHospital);
-      setSelectedHospitalName(chosenHospital.hospital_name);
-      setSelectedLocation(chosenHospital.hospital_location);
-      setSelectedRoom(chosenHospital.rooms);
-      //debugging
-      console.log(chosenHospital.rooms);
+  //fetching data from hospital, symptoms
+  const [hospitals, setHospitals] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [symptoms, setSymptoms] = useState([]);
+  // fetch data
+  useEffect(() =>{
+      const getHospital = async ()=>{
+        try{
+            const res= await fetch('http://localhost:8800/hospital');
+            if(!res.ok){
+                throw new Error('Network error')
+            }
+            const getData= await res.json();
+            setHospitals(getData);
+            console.log(getData);
+        } catch(error){
+            console.error("Couldn't fetch hospital: ", error);
+        }
+        };
+        const getRoom = async () => {
+          try {
+            const res = await fetch('http://localhost:8800/room');
+            if (!res.ok) {
+              throw new Error('Network error');
+            }
+            const getData = await res.json();
+            setRooms(getData);
+          } catch (error) {
+            console.error("Couldn't fetch rooms:", error);
+          }
+        };
+        const getSymptoms = async () => {
+          try {
+            const res = await fetch('http://localhost:8800/symptom');
+            if (!res.ok) {
+              throw new Error('Network error');
+            }
+            const getData = await res.json();
+            setSymptoms(getData);
+          } catch (error) {
+            console.error("Couldn't fetch symptoms:", error);
+          }
+        };
+        getSymptoms();
+        getHospital();
+        getRoom();
+      }, []);
+  const[selectedHospital, setSelectedHospital] = useState([]);
+  const[selectedRoom, setSelectedRoom] = useState([]);
+  const [selectedHospitalID, setSelectedHospitalId] =useState(null);
 
-    }else {
-      //debugging
-      console.error("Hospital with ID ${hospital_id} not found");
-      //resets values
-      setSelectedHospitalObj(null);
-      setSelectedLocation('');
-      setSelectedHospitalName('');
-    }
+  //alows only one hospital selection alongside with it's location at a time
+  const handleHospitalSelect = async (hospital_id) => {
+    setSelectedHospitalId(hospital_id);
+    // variable assigned
+    // look through hospitals that are fetched to return element if same id selected by patient
+    const hospital_selection = hospitals.find(hospital =>  hospital.hospital_id === hospital_id);
+    setSelectedHospital(hospital_selection);
+    // new array with elements that make sure to check for room selection corresponding to hospital id
+    const rooms_selection = rooms.filter(room => room.hospital_id === hospital_id);
+    setSelectedRoom(rooms_selection);
   }
   // only one room selection at a time
   const handleRoomSelect = (room_number) =>{
@@ -218,7 +172,7 @@ const Book_Appointment = () => {
       const formData = {
         symptoms: selectedSymptoms,
         specializations: selectedSpecialization,
-        hospital: selectedHospitalObj?.hospital_id,
+        hospital: selectedHospital,
         room: selectedRoom,
         gender: selectedGender,
         room: selectedRoom,
@@ -235,7 +189,6 @@ const Book_Appointment = () => {
       };
       console.log("Information to be submitted...");
       console.log("Symptom List: ", selectedSymptoms);
-      console.log("Hospital: ", selectedHospitalName);
       console.log("Room: ", selectedRoom);
       console.log("SSN: ", ssn);
       console.log("Medical History: ", medicalHistory);
@@ -338,7 +291,7 @@ const Book_Appointment = () => {
                       {/*Mapping symptom ids to names */}
                        <ul className="list-items" style={{ display: symptomDropDown.isOpen ? 'block' : 'none' }}>
                           {
-                            mockSymptoms.map((symptom) => (
+                            symptoms.map((symptom) => (
                               <li key={symptom.symptom_id} className="item" onClick={() => handleSymptomSelect(symptom.symptom_id)}>
                                 <span className="checkboxes">
                                   <img className={`check-pic ${selectedSymptoms.includes(symptom.symptom_id) ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10"/>
@@ -436,11 +389,11 @@ const Book_Appointment = () => {
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
                       <ul className="list-items" style={{ display: hospitalDropDown.isOpen ? 'block' : 'none' }}>
-                        {mockHospitals.map((hospital) => (
+                        {hospitals.map((hospital) => (
                           <li key={hospital.hospital_id} className="item" onClick={() => handleHospitalSelect(hospital.hospital_id)}>
                             <span className="checkboxes">
                               {/* Show checkmark if hospital is selected */}
-                              <img className={`check-pic ${selectedHospitalName === hospital.hospital_name ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                              <img className={`check-pic ${selectedHospitalID === hospital.hospital_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                             </span>
                             <span className="item-text">{hospital.hospital_name}</span>
                           </li>
@@ -458,7 +411,7 @@ const Book_Appointment = () => {
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
                       <ul className="list-items" style={{ display: roomDropDown.isOpen ? 'block' : 'none' }}>
-                        { selectedHospitalObj?.rooms?.map((room) => (
+                        { selectedRoom.map((room) => (
                           <li key={room.room_number} className="item" onClick={() => handleRoomSelect(room.room_number)}>
                             <span className="checkboxes">
                               {/* Show checkmark if room number is selected */}
@@ -480,7 +433,7 @@ const Book_Appointment = () => {
                     <p className="bubbles-header2">
                         Location:
                     </p>
-                    <div className= "hospital-location" style={{width: '100%', height: '100%'}}> {selectedLocation} </div>
+                    <div className= "hospital-location" style={{width: '100%', height: '100%'}}> {selectedHospital && selectedHospital.street_address} </div>
                   </div>
                   </div>
               
