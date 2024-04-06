@@ -36,7 +36,7 @@ const Book_Appointment = () => {
     {gender: 'Male', value:'M'},
     {gender: 'Female', value: 'F'}
   ];
-  
+
   // setting selections
   const[selectedSymptoms, setSelectedSymptoms] =useState([]);
   const[selectedSpecialization, setSelectedSpecializations]=useState('');
@@ -100,6 +100,8 @@ const Book_Appointment = () => {
               throw new Error('Network error');
             }
             const getData = await res.json();
+            // debugging
+            console.log(getData);
             setSymptoms(getData);
           } catch (error) {
             console.error("Couldn't fetch symptoms:", error);
@@ -111,6 +113,7 @@ const Book_Appointment = () => {
       }, []);
   const[selectedHospital, setSelectedHospital] = useState([]);
   const[selectedRoom, setSelectedRoom] = useState([]);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
   const [selectedHospitalID, setSelectedHospitalId] =useState(null);
 
   //alows only one hospital selection alongside with it's location at a time
@@ -128,7 +131,7 @@ const Book_Appointment = () => {
   const handleRoomSelect = (room_number) =>{
     // ensure its in an array
     console.log("Selecting room: ", room_number);
-    setSelectedRoom(room_number);
+    setSelectedRoomNumber(room_number);
   };
   //allows multiple symptom selections
   const handleSymptomSelect =(symptom_id) =>{
@@ -173,9 +176,8 @@ const Book_Appointment = () => {
         symptoms: selectedSymptoms,
         specializations: selectedSpecialization,
         hospital: selectedHospital,
-        room: selectedRoom,
+        room: selectedRoomNumber,
         gender: selectedGender,
-        room: selectedRoom,
         ssn,
         medicalHistory,
         insuranceName,
@@ -189,7 +191,7 @@ const Book_Appointment = () => {
       };
       console.log("Information to be submitted...");
       console.log("Symptom List: ", selectedSymptoms);
-      console.log("Room: ", selectedRoom);
+      console.log("Room: ", selectedRoomNumber);
       console.log("SSN: ", ssn);
       console.log("Medical History: ", medicalHistory);
       console.log("Insurance Name: ", insuranceName);
@@ -291,7 +293,7 @@ const Book_Appointment = () => {
                       {/*Mapping symptom ids to names */}
                        <ul className="list-items" style={{ display: symptomDropDown.isOpen ? 'block' : 'none' }}>
                           {
-                            symptoms.map((symptom) => (
+                            Array.isArray(symptoms) && symptoms.map((symptom) => (
                               <li key={symptom.symptom_id} className="item" onClick={() => handleSymptomSelect(symptom.symptom_id)}>
                                 <span className="checkboxes">
                                   <img className={`check-pic ${selectedSymptoms.includes(symptom.symptom_id) ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10"/>
@@ -389,7 +391,7 @@ const Book_Appointment = () => {
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
                       <ul className="list-items" style={{ display: hospitalDropDown.isOpen ? 'block' : 'none' }}>
-                        {hospitals.map((hospital) => (
+                        { Array. isArray(hospitals) && hospitals.map((hospital) => (
                           <li key={hospital.hospital_id} className="item" onClick={() => handleHospitalSelect(hospital.hospital_id)}>
                             <span className="checkboxes">
                               {/* Show checkmark if hospital is selected */}
@@ -415,7 +417,7 @@ const Book_Appointment = () => {
                           <li key={room.room_number} className="item" onClick={() => handleRoomSelect(room.room_number)}>
                             <span className="checkboxes">
                               {/* Show checkmark if room number is selected */}
-                              <img className={`check-pic ${selectedRoom === room.room_number ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                              <img className={`check-pic ${selectedRoomNumber === room.room_number ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                             </span>
                             <span className="item-text">{room.room_number}</span>
                           </li>
