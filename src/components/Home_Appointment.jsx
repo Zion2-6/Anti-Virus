@@ -71,7 +71,7 @@ const Home_Appointment = () => {
             <p className= "inline-text"> 
               <span className = "inline-header">Online</span><br></br><br></br>
               If you are an exisiting IRL Anti-Virus patient, have an account with us,
-              and want to avoid waiting on hold, you can  <Link className= "inline-link" to="/signup">log in here </Link>
+              and want to avoid waiting on hold, you can  <Link className= "inline-link" to="/login">log in here </Link>
                and make your appointment without having to pick up the phone.
               If you do not have an account with us, <Link className= "inline-link" to="/signup">create your account here</Link>.
             </p>  
