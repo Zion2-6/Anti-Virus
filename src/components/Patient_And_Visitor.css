@@ -1,0 +1,54 @@
+.before-arrival-header{
+  font-size: 20px;
+  display:flex;
+  font-weight:500;
+}
+.before-arrival-text{
+  display:flex;
+  flex-direction:column;
+  text-align: left;
+  font-size:18px;
+
+}
+.bullet-list-arrival{
+  text-align:left;
+  font-weight:normal;
+}
+.solo-bullet{
+  font-weight:normal;
+}
+.caps-all{
+  font-size:23;
+  font-weight:bolder;
+}
+.checklist-check{
+  width:50px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+}
+.appt-check{
+  display: flex;
+  align-items: center;
+}
+.parked-car-pic, .train-pic{
+  width: 60px;
+}
+.parking-car{
+  display:flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: left;
+}
+.car-and-text{
+  display:flex;
+  align-items:center;
+}
+.park-text{
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 20px;
+}
+.num-bullet{
+  margin-left:80px;
+}
+

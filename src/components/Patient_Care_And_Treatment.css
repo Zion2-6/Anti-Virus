@@ -1,0 +1,60 @@
+.treatment-header-text{
+  display:flex;
+  font-size:23px;
+  font-weight: 600;
+  text-align:left;
+  margin-bottom: 0;
+}
+.symptom-bullet-list{
+  display: flex;
+  flex-direction:row;
+  text-align: left;
+  justify-content:space-between;
+  
+}
+ul{
+  list-style-type: disc;
+  flex-basis: 100%;
+}
+li{
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-size:18px;
+}
+.healthcare-providers-container{
+  display:grid;
+  grid-template-columns: 200px 200px 200px 200px;
+  column-gap: 30px;
+  row-gap: 40px;
+  margin-bottom: 40px;
+  margin-left: 60px;
+  
+}
+
+.healthcare-provider{
+  justify-content:center;
+  align-items:center;
+  background-color: #DBF4FF;
+  font-size:20px;
+  font-weight: 600;
+  vertical-align: middle;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.healthcare-provider1, .healthcare-provider2, .healthcare-provider3, .healthcare-provider4{
+  background-color: #DBF4FF;
+  font-size:20px;
+  font-weight: 600;
+  vertical-align: middle;
+  text-align: center;
+  align-items: center;
+  align-content:center;
+  padding-top: 10px;
+  padding-bottom: 0;
+}
+.treatment-text{
+  margin-top: 0;
+  font-size:20px;
+  text-align:left;
+}

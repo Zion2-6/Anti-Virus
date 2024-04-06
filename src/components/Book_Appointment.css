@@ -1,0 +1,278 @@
+
+.dashboard-container{
+  border-width: 2px;
+  justify-content: center;
+  background-color: #DBF4FF;
+  width: 240px;
+  min-height: 100vh;
+  color: #586166;
+}
+.dashboard-header{
+  font-size: 19px;
+  font-weight:600;
+  text-decoration: underline;
+}
+.dashboard-link{
+  color:#586166;
+  font-size:18px;
+  font-weight:600px;
+}
+.dashboard-icon{
+  margin-top: 40px;
+  width: 50%;
+}
+
+.blue-container{
+  justify-content: center;
+  min-height: 100vh;
+  border: 1px solid #0C5D82;
+  background-color: #DBF4FF;
+  width: 900px;
+  margin-right: auto;
+  margin-left: auto;
+   
+}
+
+.parent-container{
+  display:grid;
+  grid-template-columns: 240px 1fr;
+  margin-top: 30px;
+}
+
+.blue-header{
+  color: #0C5D82;
+  margin-left: 80px;
+  font-size: 20px;
+  font-weight:400;
+  width:800px;
+  text-align:center;  
+}
+
+.icon-match-header{
+  margin-top: 10px;
+  width: 70px;
+  display: flex;
+  border-width:3px;
+}
+
+.first-header-container{
+  display: grid;
+  align-items:center;
+  grid-template-columns: 800px 200px;
+}
+.blue-section-headers{
+  text-align: left;
+  margin-left: 10px;
+  font-weight:600;
+  font-size: 20px;
+  display:flex;
+  color: #0C5D82;
+}
+.patient-info-bubbles{
+  display:flex;
+  flex-direction: row;
+  align-items:flex-start;
+  margin-top:0px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.bubbles1, .bubbles2, .bubbles3, .bubbles4, .bubbles5{
+  margin-right: 50px;
+}
+.bubbles6{
+  margin-left: 20px;
+}
+.bubbles-header{
+  margin-right: 20px;
+  text-align: left;
+  margin-left: 20px;
+}
+.bubbles-header2{
+  margin-right: 20px;
+  text-align: left;
+  margin-left:5px;
+}
+input.email-bubble{
+  width: 250px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none;
+}
+.select-gender,.select-symptom,.select-room,.select-specialization, .select-hospital{
+  margin-top:0;
+  background-color: white;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  border-radius:30px;
+  border:none;
+  font-weight: 600;
+  cursor:pointer;
+}
+.list-items{
+  position:relative;
+  margin-top:5px;
+  border-radius: 25px;
+  padding-left: 20px;
+  padding-right: 80px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color:white;
+  color:#0C5D82;
+}
+.list-items .item{
+  display: flex;
+  align-items: center;
+  list-style:none;
+  height: 50px;
+  cursor: pointer;
+  
+}
+.list-items.open{
+  display:block;
+}
+
+.item .item-text{
+  font-size: 12px;
+  height: 12px;
+  font-weight: bold;
+  font-family:Arial, Helvetica, sans-serif;
+}
+.checkboxes{
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  height: 16px;
+  width: 16px;
+  border-radius: 4px;
+  margin-right: 12px;
+  border: 2px solid grey;
+}
+.item .checkboxes{
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  height: 16px;
+  width: 16px;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+.checkboxes .check-pic{
+    width: 10px;
+    height: 10px;
+}
+.check-pic-hidden{
+  visibility: hidden;
+}
+.down-pic{
+  width: 20px;
+  vertical-align: middle;
+  margin-left: 80px;
+  margin-right:0;
+}
+input.gender-bubble{
+  width: 40px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+}
+.gender-text{
+  vertical-align:middle;
+  text-align: center;
+}
+.SSN-bubble{
+  width: 180px;
+  border-radius: 20px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none; 
+}
+.medical-history-bubble{
+  width: 300px;
+  border-radius: 20px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none; 
+}
+
+.insurance-bubble, .street-bubble{
+  width: 250px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none;
+}
+.state-bubble{
+  width: 50px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none;
+}
+.zip-bubble{
+  width: 100px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none;
+}
+.phone-bubble{
+  width: 200px;
+  border-radius: 40px;  
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: none;
+}
+.parent-calendar{
+  display:grid;
+  grid-template-columns: 400px 1fr;
+  grid-gap: 20px;
+}
+.appt-info-bubbles{
+  display:grid;
+  grid-template-rows: auto auto auto;
+  grid-gap: 20px;
+  border:purple;
+  border-style:solid;;
+}
+.calendar-section{
+ 
+  border-style:solid;
+  border-width: 2px;
+  display: grid;
+  grid-template-columns: 1fr;
+  font-size:20px;
+}
+
+.schedule-appt-button{
+  margin-top: 50px;
+  background-color:#7BC0E0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  cursor:pointer;
+  transition: opacity 0.15s;
+}
+.schedule-appt-button:hover{
+  background-color:#71adc9;
+}
+.schedule-appt-button:active{
+  opacity:0.7;
+}

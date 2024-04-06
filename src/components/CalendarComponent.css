@@ -1,0 +1,48 @@
+.calendar-container{
+  margin-left: 0;
+  display: grid;
+  height: 500px;
+  min-width: 600px;
+}
+.parent-calendar-container{ 
+  display:grid;
+  grid-template-columns: 600px 200px;
+  column-gap: 50px;
+  justify-content: center;
+}
+.appt-selection-box{
+  margin-left:50px;
+  margin-top: 100px;
+  margin-left: 0;
+  justify-content: center;
+  vertical-align: center;
+}
+.react-big-calendar {
+  font-size: 0.85rem; /* Adjust the base font size for calendar content */
+}
+.delete-event-button,.add-event-button{
+  margin-top: 10px;
+  margin-right: 0;
+  background-color:#7BC0E0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 30px;
+  border: none;
+  font-weight:600;
+  cursor:pointer;
+  transition: opacity 0.15s;
+}
+.delete-event-button:hover,.add-event-button:hover{
+  background-color:#71adc9;
+}
+.delete-event-button:active,.add-event-button:active{
+  opacity: 0.7;
+}
+.change-datepicker{
+  width: 200px;
+  height: 20px;
+  margin-bottom: 10px;
+
+}

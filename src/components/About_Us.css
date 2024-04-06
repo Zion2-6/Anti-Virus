@@ -1,0 +1,39 @@
+.about-us-page{
+  background-color: #FAF7F7;
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+}
+.about-us-header-text{
+  margin-top: 10px;
+  font-size: 25px;
+  font-weight:600;
+  display:flex;
+  color: #0C5D82;
+}
+.about-us-body-text{
+  display: flex;
+  text-align: left;
+  font-size: 20px;
+}
+.value-headers{
+  font-size: 23px;
+  font-weight: 600;
+  text-align:left;
+  display:flex;
+}
+.value-body-text{
+  display: flex;
+  text-align: left;
+  font-size: 20px;
+}
+.value-body-text2{
+  font-size: 20px;
+  text-align: left;
+}
+
+.value-font{
+  font-weight:600;
+  text-decoration-line: underline;
+  font-style:italic;
+}
