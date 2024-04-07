@@ -74,6 +74,21 @@ input::placeholder, input::date{
   transition: hover 0.15s, opacity 0.15s;
 
 }
+.user-container{
+  display:flex;
+}
+.select-user-role{
+  margin-top:0;
+  background-color: white;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  border-radius:30px;
+  border:none;
+  font-weight: 600;
+  cursor:pointer;
+}
 .create-acct-button:hover{
   color:white;
   background-color: black;

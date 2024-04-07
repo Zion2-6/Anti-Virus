@@ -225,7 +225,7 @@ const Booking_View_R = () => {
           <p className = "dashboard-header">Dashboard</p>
           <p><Link className= "dashboard-link" to="/dashboard-receptionist/patient-records">Patient Records</Link></p>
           <p><Link className= "dashboard-link" to="/dashboard-receptionist/appointments">Appointments</Link></p>
-          <p><a className= "dashboard-link" href="#">Billing</a></p>
+          <p><a className= "dashboard-link" href="#">Billim</a></p>
       </div>
       
       <div className= "blue-container">
@@ -235,85 +235,10 @@ const Booking_View_R = () => {
               </div>
                   <img className = "icon-match-header" src={calendar_icon}></img>
               </div>
-              <p className= "blue-section-headers">Patient Information</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                        Email:
-                    </p>
-                    <input className="email-bubble" type="text" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>
-                  </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                    <span className= "gender-text"> Gender: </span>
-                    </p>
-                    <div className="gender-container">
-                        <button type="button" className="select-gender" onClick={genderDropDown.toggleList}>
-                          Select Gender
-                          <img className="down-pic" src={down} alt="Down" />
-                        </button>
-                        <ul className="list-items" style={{ display: genderDropDown.isOpen ? 'block' : 'none' }}>
-                          {genderOptions.map((gender_option) => (
-                            <li key={gender_option.value} className="item" onClick={() => handleGenderSelect(gender_option.value)}>
-                              <span className="checkboxes">
-                                {/* only shows checks for selected genders*/}
-                                <img className={`check-pic ${selectedGender === gender_option.value ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                              </span>
-                              {/* only gender name is shown to user */}
-                              <span className="item-text">{gender_option.gender}</span>
-                            </li>
-                            ))}
-                        </ul>
-                    </div>
-                  </div>
-                  <div className = "bubbles3">
-                    <p className="bubbles-header">
-                        SSN:
-                    </p>
-                    <input className="SSN-bubble" type="text" name="SSN" pattern="^\d{3}\d{2}\d{4}$" required 
-                    onChange={(e) =>setSSN(e.target.value)}/>
-                  </div>
+              <p className= "blue-section-headers">Appointment Information</p><br></br>
+              <div><CalendarComponent onEventChange={handleCalendarEventChange}/>
               </div>
-
-              <p className= "blue-section-headers">Medical Concerns</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                      Symptoms:
-                    </p>
-                    <div className="symptoms-container">
-                      <button type="button" className="select-symptom" onClick={symptomDropDown.toggleList}>
-                          Select Symptoms
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      {/*Mapping symptom ids to names */}
-                       <ul className="list-items" style={{ display: symptomDropDown.isOpen ? 'block' : 'none' }}>
-                          {
-                            Array.isArray(symptoms) && symptoms.map((symptom) => (
-                              <li key={symptom.symptom_id} className="item" onClick={() => handleSymptomSelect(symptom.symptom_id)}>
-                                <span className="checkboxes">
-                                  <img className={`check-pic ${selectedSymptoms.includes(symptom.symptom_id) ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10"/>
-                                </span>
-                                 <span className="item-text">{symptom.symptom_name}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>  
-                      </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                        Medical History:
-                    </p>
-                    <input className="medical-history-bubble" type="text" name="history" pattern="^[a-zA-Z0-9._\s]{1,255}$" required 
-                           onChange={(e) =>setMedicalHistory(e.target.value)}/>
-                  </div>
-                
-              </div>
-
-              <p className= "blue-section-headers">Insurance Information</p><br></br>
-              <div className= "patient-info-bubbles">
+            <div className= "patient-info-bubbles">
               
                   <div className = "bubbles1">
                     <p className="bubbles-header">
@@ -353,97 +278,10 @@ const Booking_View_R = () => {
                       onChange={(e) =>setZipCode(e.target.value)}/>
                   </div>
               </div>
-            
-              <p className= "blue-section-headers">Selection</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                        Doctor Speciality:
-                    </p>
-                    <div className="specializations-container">
-                      <button type="button" className="select-specialization" onClick={specializationDropDown.toggleList}>
-                    Select Specialization
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: specializationDropDown.isOpen ? 'block' : 'none' }}>
-                        {mockSpecializations.map((specialization) => (
-                          <li key={specialization.doctor_id} className="item" onClick={() => handleSpecializationSelect(specialization.doctor_id)}>
-                            <span className="checkboxes">
-                              {/*Ensuring the checkmark is small and only shows checks for selected specializations*/}
-                              <img className={`check-pic ${selectedSpecialization === specialization.doctor_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{specialization.specialization}</span>
-                          </li>
-                          ))}
-                        </ul>
-                      </div>
-                      </div>
-                    <div className = "bubbles2">
-                    <p className="bubbles-header">
-                        Hospital:
-                    </p>
-                    <div className="hospitals-container">
-                      <button type="button" className="select-hospital" onClick={hospitalDropDown.toggleList}>
-                        Select Hospital
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: hospitalDropDown.isOpen ? 'block' : 'none' }}>
-                        { Array. isArray(hospitals) && hospitals.map((hospital) => (
-                          <li key={hospital.hospital_id} className="item" onClick={() => handleHospitalSelect(hospital.hospital_id)}>
-                            <span className="checkboxes">
-                              {/* Show checkmark if hospital is selected */}
-                              <img className={`check-pic ${selectedHospitalID === hospital.hospital_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{hospital.hospital_name}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                        Room Number:
-                    </p>
-                    <div className="room-container">
-                      <button type="button" className="select-room" onClick={roomDropDown.toggleList}>
-                        Select Room
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: roomDropDown.isOpen ? 'block' : 'none' }}>
-                        { selectedRoom.map((room) => (
-                          <li key={room.room_number} className="item" onClick={() => handleRoomSelect(room.room_number)}>
-                            <span className="checkboxes">
-                              {/* Show checkmark if room number is selected */}
-                              <img className={`check-pic ${selectedRoomNumber === room.room_number ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{room.room_number}</span>
-                          </li>
-                        ))}
-                        
-                      </ul>
-                    
-                    </div>
-                  </div>
-                </div>
-                <div className= "patient-info-bubbles">
-                  
-                    
-                  <div className ="bubbles6">
-                    <p className="bubbles-header2">
-                        Location:
-                    </p>
-                    <div className= "hospital-location" style={{width: '100%', height: '100%'}}> {selectedHospital && selectedHospital.street_address} </div>
-                  </div>
-                  </div>
-              
+      
 
               <p className= "blue-section-headers">Preferred Date & Time</p><br></br>
               
-              <div><CalendarComponent onEventChange={handleCalendarEventChange}/>
-              </div>
-                          
-              <button className= "schedule-appt-button" onClick={(e) => handleSubmit(e)}>Schedule Appointment</button>
               <p><a className= "dashboard-link" href="#">Go Back</a></p>
         </div>
     </div>

@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import './Signup.css'; // Make sure to adjust the path as necessary
 import {Link} from "react-router-dom";
 import {useNavigate} from 'react-router-dom';
+import './Book_Appointment.css'
+import useDropDown from "./UseDropDown";
+import check from './pictures/check-2.png'
+import down from './pictures/down.png'
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -16,9 +20,27 @@ const Signup = () => {
     zip: '',
     phone: '',
     age: '',
-    dob: ''
+    dob: '',
+    userRole: '',
   });
-
+  
+  const userRoleOptions =[
+    {user_role: 'Patient', value:'Patient'},
+    {user_role: 'Doctor', value: 'Doctor'},
+    {user_role: 'Receptionist', value: 'Receptionist'}
+  ];
+  //setting user roles
+  const[selectedUserRole, setSelectedUserRole] = useState('');
+  
+  const handleUserRoleSelect = (value) =>{
+    setSelectedUserRole(value);
+    //updating the form data with selected role
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      userRole: value, 
+    }));
+  }
+  const userRoleDropDown = useDropDown();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -85,6 +107,30 @@ const Signup = () => {
             <label htmlFor="dob">Date of Birth:</label><br />
             <input className="dob-box" type="date" name="dob" value={formData.dob} onChange={handleChange} required />
           </div>
+        </div>
+        <div className="user-container">
+        <div className ="bubbles3">
+                    <p className="bubbles-header">
+                    <span className= "user-role-text"> User Roles: </span>
+                    </p>
+          
+            <button type="button" className="select-user-role" onClick={userRoleDropDown.toggleList}>
+                Select User Role
+              <img className="down-pic" src={down} alt="Down" />
+              </button>
+              <ul className="list-items" style={{ display: userRoleDropDown.isOpen ? 'block' : 'none' }}>
+                  {userRoleOptions.map((role_option) => (
+                    <li key={role_option.value} className="item" onClick={() => handleUserRoleSelect(role_option.value)}>
+                       <span className="checkboxes">
+                          {/* only shows checks for selected genders*/}
+                           <img className={`check-pic ${selectedUserRole === role_option.value ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                        </span>
+                          {/* only gender name is shown to user */}
+                        <span className="item-text">{role_option.user_role}</span>
+                      </li>
+                ))}
+                </ul>
+        </div>
         </div>
         <div className="submission">
           <button className="create-acct-button">Create Account</button>
