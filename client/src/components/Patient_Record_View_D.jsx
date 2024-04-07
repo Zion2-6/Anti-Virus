@@ -25,8 +25,9 @@ const Patient_Record_View_D = () => {
           <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
           <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Appointments</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-doctor/appointments">Appointments</Link></p>
           <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-doctor/modify-prescription">Modify Prescription</Link></p>
       </div>
       
       <div className= "gray-container">

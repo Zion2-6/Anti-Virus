@@ -43,6 +43,13 @@ app.get("/disease", (req, res)=> {
     return res.json(data)
   })
 })
+app.get("/doctor", (req, res)=> {
+  const q = "SELECT * FROM doctor"
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
 
 app.listen(8800, ()=>{
   console.log("Connected to backend!")

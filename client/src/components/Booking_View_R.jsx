@@ -4,7 +4,7 @@ import './Home.css'
 import './Book_Appointment.css'
 import useDropDown from "./UseDropDown";
 import caduceus from './pictures/caduceus.png'
-import patient_icon from './pictures/patient.png'
+import receptionist_icon from './pictures/receptionist.png'
 import calendar_icon from './pictures/calendar.png'
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
@@ -12,8 +12,24 @@ import CalendarComponent from './CalendarComponent'
 import format from "date-fns/format";
 
 
-const Book_Appointment = () => {
+const Booking_View_R = () => {
   
+  const mockSpecializations = [
+    { doctor_id: 1, specialization: 'General Medicine' },
+    { doctor_id: 2, specialization: 'Orthopedics' },
+    { doctor_id: 3, specialization: 'Pediatrics' },
+    { doctor_id: 4, specialization: 'Gastroenterology' },
+    { doctor_id: 5, specialization: 'Endocrinology' },
+    { doctor_id: 6, specialization: 'Urology' },
+    { doctor_id: 7, specialization: 'Hematology' },
+    { doctor_id: 8, specialization: 'Dermatology' },
+    { doctor_id: 9, specialization: 'Ophthalmology' },
+    { doctor_id: 10, specialization: 'Neurology' },
+    { doctor_id: 11, specialization: 'Cardiology' },
+    { doctor_id: 12, specialization: 'Obstetrics and Gynecology' },
+  ];
+  
+
   //const navigate = useNavigate();
   //select through gender options
   const genderOptions =[
@@ -23,6 +39,7 @@ const Book_Appointment = () => {
 
   // setting selections
   const[selectedSymptoms, setSelectedSymptoms] =useState([]);
+  const[selectedSpecialization, setSelectedSpecializations]=useState('');
   const[selectedGender, setSelectedGender] = useState('');
   // data for submitting book appointment
   const [ssn, setSSN] = useState('');
@@ -38,7 +55,10 @@ const Book_Appointment = () => {
   const hospitalDropDown = useDropDown();
   const genderDropDown = useDropDown();
   const roomDropDown = useDropDown();
- 
+  //allows only one specialization and selection at a time
+  const handleSpecializationSelect = (doctor_id) => {
+    setSelectedSpecializations(doctor_id);
+  }
   const handleGenderSelect = (value) =>{
     setSelectedGender(value);
   }
@@ -46,7 +66,6 @@ const Book_Appointment = () => {
   const [hospitals, setHospitals] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [symptoms, setSymptoms] = useState([]);
-  const [doctors, setDoctors] = useState([]);
   // fetch data
   useEffect(() =>{
       const getHospital = async ()=>{
@@ -88,50 +107,25 @@ const Book_Appointment = () => {
             console.error("Couldn't fetch symptoms:", error);
           }
         };
-        const getDoctors = async () => {
-          try {
-            const res = await fetch('http://localhost:8800/doctor');
-            if (!res.ok) {
-              throw new Error('Network error');
-            }
-            const getData = await res.json();
-            // debugging
-            console.log(getData);
-            setDoctors(getData);
-          } catch (error) {
-            console.error("Couldn't fetch symptoms:", error);
-          }
-        };
-        getDoctors();
         getSymptoms();
         getHospital();
         getRoom();
       }, []);
   const[selectedHospital, setSelectedHospital] = useState([]);
   const[selectedRoom, setSelectedRoom] = useState([]);
-  const[selectedSpecialization, setSelectedSpecializations]=useState([]);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
+  const [selectedHospitalID, setSelectedHospitalId] =useState(null);
 
-  const[selectedRoomNumber, setSelectedRoomNumber] = useState(null);
-  const[selectedDoctor, setSelectedDoctor] = useState(null);
-  const[selectedHospitalID, setSelectedHospitalId] =useState(null);
-  
   //alows only one hospital selection alongside with it's location at a time
   const handleHospitalSelect = async (hospital_id) => {
     setSelectedHospitalId(hospital_id);
-    
     // variable assigned
     // look through hospitals that are fetched to return element if same id selected by patient
     const hospital_selection = hospitals.find(hospital =>  hospital.hospital_id === hospital_id);
     setSelectedHospital(hospital_selection);
-    
     // new array with elements that make sure to check for room selection corresponding to hospital id
     const rooms_selection = rooms.filter(room => room.hospital_id === hospital_id);
     setSelectedRoom(rooms_selection);
-
-     // new array with elements that make sure to check for doctor selection corresponding to hospital id
-     const doctors_selection = doctors.filter(doctor => doctor.hospital_id === hospital_id);
-      setSelectedSpecializations(doctors_selection);
-
   }
   // only one room selection at a time
   const handleRoomSelect = (room_number) =>{
@@ -139,10 +133,6 @@ const Book_Appointment = () => {
     console.log("Selecting room: ", room_number);
     setSelectedRoomNumber(room_number);
   };
-   //allows only one specialization and selection at a time
-   const handleDoctorSelect = (doctor_id) => {
-    setSelectedDoctor(doctor_id);
-  }
   //allows multiple symptom selections
   const handleSymptomSelect =(symptom_id) =>{
 
@@ -184,8 +174,8 @@ const Book_Appointment = () => {
       console.log("Patient is insured: ", isInsured);
       const formData = {
         symptoms: selectedSymptoms,
-        specializations: selectedDoctor,
-        hospital: selectedHospitalID,
+        specializations: selectedSpecialization,
+        hospital: selectedHospital,
         room: selectedRoomNumber,
         gender: selectedGender,
         ssn,
@@ -202,8 +192,6 @@ const Book_Appointment = () => {
       console.log("Information to be submitted...");
       console.log("Symptom List: ", selectedSymptoms);
       console.log("Room: ", selectedRoomNumber);
-      console.log("Doctor: ", selectedDoctor);
-      console.log("Doctor: ",selectedHospitalID);
       console.log("SSN: ", ssn);
       console.log("Medical History: ", medicalHistory);
       console.log("Insurance Name: ", insuranceName);
@@ -233,13 +221,11 @@ const Book_Appointment = () => {
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
-          <img className = "dashboard-icon" src={patient_icon}></img>
+          <img className = "dashboard-icon" src={receptionist_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/patient-record">Patient Record</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/prescription">Prescription</Link></p>
-          <p><a className= "dashboard-link" href="#">Bill</a></p>
-          <p><a className= "dashboard-link" href="#">Payment</a></p>
+          <p><Link className= "dashboard-link" to="/dashboard-receptionist/patient-records">Patient Records</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-receptionist/appointments">Appointments</Link></p>
+          <p><a className= "dashboard-link" href="#">Billing</a></p>
       </div>
       
       <div className= "blue-container">
@@ -370,7 +356,30 @@ const Book_Appointment = () => {
             
               <p className= "blue-section-headers">Selection</p><br></br>
               <div className= "patient-info-bubbles">
-                <div className = "bubbles1">
+              
+                  <div className = "bubbles1">
+                    <p className="bubbles-header">
+                        Doctor Speciality:
+                    </p>
+                    <div className="specializations-container">
+                      <button type="button" className="select-specialization" onClick={specializationDropDown.toggleList}>
+                    Select Specialization
+                        <img className="down-pic" src={down} alt="Down" />
+                      </button>
+                      <ul className="list-items" style={{ display: specializationDropDown.isOpen ? 'block' : 'none' }}>
+                        {mockSpecializations.map((specialization) => (
+                          <li key={specialization.doctor_id} className="item" onClick={() => handleSpecializationSelect(specialization.doctor_id)}>
+                            <span className="checkboxes">
+                              {/*Ensuring the checkmark is small and only shows checks for selected specializations*/}
+                              <img className={`check-pic ${selectedSpecialization === specialization.doctor_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                            </span>
+                            <span className="item-text">{specialization.specialization}</span>
+                          </li>
+                          ))}
+                        </ul>
+                      </div>
+                      </div>
+                    <div className = "bubbles2">
                     <p className="bubbles-header">
                         Hospital:
                     </p>
@@ -392,29 +401,6 @@ const Book_Appointment = () => {
                       </ul>
                     </div>
                   </div>
-                  <div className = "bubbles2">
-                    <p className="bubbles-header">
-                        Doctor Speciality:
-                    </p>
-                    <div className="specializations-container">
-                      <button type="button" className="select-specialization" onClick={specializationDropDown.toggleList}>
-                    Select Specialization
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: specializationDropDown.isOpen ? 'block' : 'none' }}>
-                        {selectedSpecialization.map((doctor) => (
-                          <li key={doctor.doctor_id} className="item" onClick={() => handleDoctorSelect(doctor.doctor_id)}>
-                            <span className="checkboxes">
-                              {/*Ensuring the checkmark is small and only shows checks for selected specializations*/}
-                              <img className={`check-pic ${selectedDoctor === doctor.doctor_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{doctor.specialization}</span>
-                          </li>
-                          ))}
-                        </ul>
-                      </div>
-                      </div>
-                    
                   <div className ="bubbles3">
                     <p className="bubbles-header">
                         Room Number:
@@ -466,4 +452,4 @@ const Book_Appointment = () => {
     );
 };
 
-export default Book_Appointment;
+export default Booking_View_R;

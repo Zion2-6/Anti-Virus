@@ -25,7 +25,7 @@ const Patient_Record_View_R = () => {
           <img className = "dashboard-icon" src={receptionist_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
           <p><Link className= "dashboard-link" to="/dashboard-receptionist/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Appointments</Link></p>
+          <p><Link className= "dashboard-link" to="/dashboard-receptionist/appointments">Appointments</Link></p>
           <p><a className= "dashboard-link" href="#">Billing</a></p>
       </div>
       

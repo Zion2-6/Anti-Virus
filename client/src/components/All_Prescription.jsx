@@ -11,7 +11,7 @@ import prescription from './pictures/prescription.png'
 import doctor_icon from './pictures/doctor.png'
 
 
-const Prescription_Doctor = () => {
+const All_Prescription = () => {
   const mockPatients = [
     {
       patient_id: 1,
@@ -256,4 +256,4 @@ const Prescription_Doctor = () => {
     );
   };
 
-export default Prescription_Doctor;
+export default All_Prescription
