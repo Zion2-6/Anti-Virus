@@ -157,6 +157,21 @@ const Book_Appointment = () => {
 
   });
 };
+  //calculate the symptoms for level
+  const determineCriticalLevelAndVIP = (symptom_count) =>{
+    let criticalLevel = "low";
+    let isVIP = false;
+
+    if(symptom_count >= 1 && symptom_count <= 3){
+      criticalLevel = "low";
+    } else if (symptom_count >=4 && symptom_count <= 6){
+      criticalLevel= "moderate";
+    } else if (symptom_count >= 7){
+      criticalLevel = "high";
+      isVIP = true;
+    }
+    return {criticalLevel, isVIP};
+  } ;
 
     //events from calendar
     const [calendarEvents, setCalendarEvents] = useState([]);
@@ -181,9 +196,14 @@ const Book_Appointment = () => {
       const formatEnd =format (event.start, 'yyyy-MM-dd HH:mm:ss');
       // checking if a user is insured
       const isInsured = insuranceName !== '' ? 1: 0;
+      //checking length of symptom length
+      const symptom_count = selectedSymptoms.length;
+      const { criticalLevel, isVIP } = determineCriticalLevelAndVIP(symptom_count);
       console.log("Patient is insured: ", isInsured);
       const formData = {
         symptoms: selectedSymptoms,
+        severity_level: criticalLevel,
+        isVIP,
         specializations: selectedDoctor,
         hospital: selectedHospitalID,
         room: selectedRoomNumber,
@@ -201,6 +221,8 @@ const Book_Appointment = () => {
       };
       console.log("Information to be submitted...");
       console.log("Symptom List: ", selectedSymptoms);
+      console.log("Severity_level ", criticalLevel);
+      console.log("Is the person VIP: ", isVIP);
       console.log("Room: ", selectedRoomNumber);
       console.log("Doctor: ", selectedDoctor);
       console.log("Doctor: ",selectedHospitalID);
