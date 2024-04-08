@@ -48,10 +48,30 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form submission logic here
-    console.log(formData);
-    navigate('/login');
+    fetch('http://localhost:8800/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        // redirect to login
+        navigate('/login');
+      })
+      .catch((error) => {
+        console.error('There was a problem with the fetch operation:', error);
+        // Handle error, show error message to the user, etc.
+      });
   };
+
 
   return (
     <div className="account-container2">

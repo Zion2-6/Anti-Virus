@@ -51,6 +51,38 @@ app.get("/doctor", (req, res)=> {
   })
 })
 
+
+app.post("/signup", (req, res) => {
+  const {
+    firstname,
+    lastname,
+    email,
+    username,
+    pass,
+    street,
+    state,
+    zip,
+    phone,
+    age,
+    userRole,
+    dob
+  } = req.body;
+
+  // Insert the user data into the person table
+  db.query(
+    `INSERT INTO person (username, user_password, user_role, email, first_name, last_name, phone_number, date_of_birth, age, street_address, state_address, zipcode_address) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [username, pass, userRole, email, firstname, lastname, phone, dob, age, street, state, zip],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Error registering user" });
+      }
+      return res.status(200).json({ message: "User registered successfully" });
+    }
+  );
+});
+
 app.listen(8800, ()=>{
   console.log("Connected to backend!")
 })
