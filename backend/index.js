@@ -60,9 +60,9 @@ app.get("/doctor_name", (req, res)=> {
         d.specialization,
         d.hospital_id,
         d.doctor_id
-FROM person p
-JOIN doctor d ON p.user_id = d.user_id
-WHERE p.user_role = 'Doctor';`
+  FROM person p
+    JOIN doctor d ON p.user_id = d.user_id
+    WHERE p.user_role = 'Doctor';`
   db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
@@ -99,7 +99,7 @@ app.get("/patient_id_name", (req, res)=> {
     pe.first_name AS patient_first_name, 
     pe.last_name AS patient_last_name
   FROM patient p
-  INNER JOIN person pe ON p.user_id = pe.user_id;`
+    INNER JOIN person pe ON p.user_id = pe.user_id;`
   db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
@@ -137,10 +137,10 @@ app.get("/patient_prescription_info", (req, res)=> {
             )
         ) AS symptoms
     FROM patient p
-    JOIN person pe ON p.user_id = pe.user_id
-    LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
-    LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
-    GROUP BY p.patient_id;`
+      JOIN person pe ON p.user_id = pe.user_id
+      LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+      LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
+      GROUP BY p.patient_id;`
   db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
@@ -193,19 +193,19 @@ app.get("/appointment_info", (req, res)=> {
   const q =
   `
     SELECT 
-    p.first_name AS patient_first_name,
-    p.last_name AS patient_last_name,
-    pt.patient_id AS patient_id,
-    d.doctor_id AS doctor_id,
-    doc.first_name AS doctor_first_name,
-    doc.last_name AS doctor_last_name,
-    a.appointment_id
-  FROM appointment a
-  JOIN patient pt ON a.patient_id = pt.patient_id
-  JOIN person p ON pt.user_id = p.user_id
-  JOIN doctor d ON  a.doctor_id = d.doctor_id
-  JOIN person doc ON d.user_id = doc.user_id;`
-  db.query(q, (err,data)=> {
+      p.first_name AS patient_first_name,
+      p.last_name AS patient_last_name,
+      pt.patient_id AS patient_id,
+      d.doctor_id AS doctor_id,
+      doc.first_name AS doctor_first_name,
+      doc.last_name AS doctor_last_name,
+      a.appointment_id
+    FROM appointment a
+      JOIN patient pt ON a.patient_id = pt.patient_id
+      JOIN person p ON pt.user_id = p.user_id
+      JOIN doctor d ON  a.doctor_id = d.doctor_id
+      JOIN person doc ON d.user_id = doc.user_id;`
+    db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
   })
@@ -228,21 +228,54 @@ app.get("/full_appointment_info", (req, res)=> {
         )
     ) AS symptoms
   FROM appointment a
-  JOIN doctor d ON a.doctor_id = d.doctor_id
-  JOIN person doc ON d.user_id = doc.user_id
-  JOIN patient p ON a.patient_id = p.patient_id
-  JOIN person pat ON p.user_id = pat.user_id
-  LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
-  LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
-  GROUP BY 
-    a.appointment_id,
-    d.doctor_id,
-    p.patient_id;`
+    JOIN doctor d ON a.doctor_id = d.doctor_id
+    JOIN person doc ON d.user_id = doc.user_id
+    JOIN patient p ON a.patient_id = p.patient_id
+    JOIN person pat ON p.user_id = pat.user_id
+    LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+    LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
+    GROUP BY 
+      a.appointment_id,
+      d.doctor_id,
+      p.patient_id;`
   db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
   })
 })
+app.get("/patient_records", (req, res) => {
+  const q = 
+  `
+  SELECT 
+    pe.first_name, 
+    pe.last_name, 
+    CONCAT(SUBSTRING(pe.phone_number, 1, 3), '-', SUBSTRING(pe.phone_number, 4, 3), '-', SUBSTRING(pe.phone_number, 7, 4)) AS phone_number,
+    DATE_FORMAT(pe.date_of_birth, '%Y-%m-%d') AS date_of_birth,
+    pe.age, 
+    pe.street_address, 
+    pe.state_address, 
+    pe.zipcode_address, 
+    p.patient_id, 
+    p.SSN, 
+    p.Gender, 
+    p.insurance_id, 
+    i.insurance_name, -- Included insurance_name
+    CASE WHEN p.isInsured = 1 THEN 'Yes' ELSE 'No' END as isInsured, 
+    p.severity_level, 
+    CASE WHEN p.isVIP = 1 THEN 'Yes' ELSE 'No' END as isVIP, 
+    p.medical_history
+  FROM patient p
+    JOIN person pe ON p.user_id = pe.user_id
+    LEFT JOIN insurance i ON p.insurance_id = i.insurance_id;`
+  db.query(q, (err, data) => {
+      if (err) {
+          console.error("Database query error:", err);
+          return res.json(err);
+      }
+      console.log("Database query success:", data);
+      return res.json(data);
+  });
+});
 
 
 app.listen(8800, ()=>{

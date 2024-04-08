@@ -20,7 +20,7 @@ const All_Prescription = () => {
     const[additionalNotes, setNotes] = useState('');
     
     
-    //another way of fetching data for appointment
+    //another way of fetching data for prescription
   const [patients, setPatients] = useState([]);
   useEffect(() =>{
     const getPatient= async ()=>{
@@ -41,7 +41,6 @@ const All_Prescription = () => {
     }, []);
     // patient list  
     const patientDropDown = useDropDown();
-    //makes sure that symptoms is an empty array
     const[selectedPatient, setSelectedPatient] = useState([]);
     const[selectedPatientID, setSelectedPatientID] = useState(null);
     //allows only one patient id selection with their first name,last name, and symptoms, 
