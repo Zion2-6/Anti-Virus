@@ -2,213 +2,90 @@ import React, { useState, useEffect } from "react"
 import {Link, useNavigate} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
+import './Booking_View_R.css'
 import useDropDown from "./UseDropDown";
 import caduceus from './pictures/caduceus.png'
 import doctor_icon from './pictures/doctor.png'
 import calendar_icon from './pictures/calendar.png'
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import axios from 'axios';
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-import CalendarComponent from './CalendarComponent'
-import format from "date-fns/format";
 
 
 const Booking_View_D = () => {
-  
-  const mockSpecializations = [
-    { doctor_id: 1, specialization: 'General Medicine' },
-    { doctor_id: 2, specialization: 'Orthopedics' },
-    { doctor_id: 3, specialization: 'Pediatrics' },
-    { doctor_id: 4, specialization: 'Gastroenterology' },
-    { doctor_id: 5, specialization: 'Endocrinology' },
-    { doctor_id: 6, specialization: 'Urology' },
-    { doctor_id: 7, specialization: 'Hematology' },
-    { doctor_id: 8, specialization: 'Dermatology' },
-    { doctor_id: 9, specialization: 'Ophthalmology' },
-    { doctor_id: 10, specialization: 'Neurology' },
-    { doctor_id: 11, specialization: 'Cardiology' },
-    { doctor_id: 12, specialization: 'Obstetrics and Gynecology' },
-  ];
-  
 
-  //const navigate = useNavigate();
-  //select through gender options
-  const genderOptions =[
-    {gender: 'Male', value:'M'},
-    {gender: 'Female', value: 'F'}
-  ];
+moment.locale("en-US");
+const localizer = momentLocalizer(moment); 
 
-  // setting selections
-  const[selectedSymptoms, setSelectedSymptoms] =useState([]);
-  const[selectedSpecialization, setSelectedSpecializations]=useState('');
-  const[selectedGender, setSelectedGender] = useState('');
-  // data for submitting book appointment
-  const [ssn, setSSN] = useState('');
-  const [medicalHistory, setMedicalHistory] = useState('');
-  const [insuranceName, setInsuranceName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [state, setState] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  //usage of down down method to select items or an item in a list 
-  const symptomDropDown = useDropDown();
-  const specializationDropDown = useDropDown();
-  const hospitalDropDown = useDropDown();
-  const genderDropDown = useDropDown();
-  const roomDropDown = useDropDown();
-  //allows only one specialization and selection at a time
-  const handleSpecializationSelect = (doctor_id) => {
-    setSelectedSpecializations(doctor_id);
-  }
-  const handleGenderSelect = (value) =>{
-    setSelectedGender(value);
-  }
-  //fetching data from hospital, symptoms
-  const [hospitals, setHospitals] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [symptoms, setSymptoms] = useState([]);
-  // fetch data
-  useEffect(() =>{
-      const getHospital = async ()=>{
-        try{
-            const res= await fetch('http://localhost:8800/hospital');
-            if(!res.ok){
-                throw new Error('Network error')
-            }
-            const getData= await res.json();
-            setHospitals(getData);
-            console.log(getData);
-        } catch(error){
-            console.error("Couldn't fetch hospital: ", error);
-        }
-        };
-        const getRoom = async () => {
-          try {
-            const res = await fetch('http://localhost:8800/room');
-            if (!res.ok) {
-              throw new Error('Network error');
-            }
-            const getData = await res.json();
-            setRooms(getData);
-          } catch (error) {
-            console.error("Couldn't fetch rooms:", error);
-          }
-        };
-        const getSymptoms = async () => {
-          try {
-            const res = await fetch('http://localhost:8800/symptom');
-            if (!res.ok) {
-              throw new Error('Network error');
-            }
-            const getData = await res.json();
-            // debugging
-            console.log(getData);
-            setSymptoms(getData);
-          } catch (error) {
-            console.error("Couldn't fetch symptoms:", error);
-          }
-        };
-        getSymptoms();
-        getHospital();
-        getRoom();
-      }, []);
-  const[selectedHospital, setSelectedHospital] = useState([]);
-  const[selectedRoom, setSelectedRoom] = useState([]);
-  const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
-  const [selectedHospitalID, setSelectedHospitalId] =useState(null);
+const[calendarEvents, setCalendarEvents] = useState([]);
 
-  //alows only one hospital selection alongside with it's location at a time
-  const handleHospitalSelect = async (hospital_id) => {
-    setSelectedHospitalId(hospital_id);
-    // variable assigned
-    // look through hospitals that are fetched to return element if same id selected by patient
-    const hospital_selection = hospitals.find(hospital =>  hospital.hospital_id === hospital_id);
-    setSelectedHospital(hospital_selection);
-    // new array with elements that make sure to check for room selection corresponding to hospital id
-    const rooms_selection = rooms.filter(room => room.hospital_id === hospital_id);
-    setSelectedRoom(rooms_selection);
-  }
-  // only one room selection at a time
-  const handleRoomSelect = (room_number) =>{
-    // ensure its in an array
-    console.log("Selecting room: ", room_number);
-    setSelectedRoomNumber(room_number);
-  };
-  //allows multiple symptom selections
-  const handleSymptomSelect =(symptom_id) =>{
-
-    setSelectedSymptoms((currSelectedSymptoms) => {
-      if(currSelectedSymptoms.includes(symptom_id)){
-        //new array after deselection
-      return currSelectedSymptoms.filter(id => id !== symptom_id);
-    } else {
-        //new arrary after adding symptoms
-      return[...currSelectedSymptoms, symptom_id];
-    }
-
+ // Converting appointments data into calendar events
+ const formatAppointmentsForCalendar = (appointments) => {
+  //maps through appointment information
+  return appointments.map(appointment => {
+    return {
+      //formats appointment information into a title
+      title: `Appointment ${appointment.appointment_id} with Doctor ${appointment.doctor_id} and with Patient ${appointment.patient_id}`,
+      start: new Date(appointment.start_time),
+      end: new Date(appointment.end_time),
+      allDay: false 
+    };
   });
 };
 
-    //events from calendar
-    const [calendarEvents, setCalendarEvents] = useState([]);
-    const handleCalendarEventChange = (finalEvent) => {
-      setCalendarEvents(finalEvent);
-    };
-    //checks if form is submitted default is false
-    const[formSubmitted, setFormSubmitted] = useState(false);
-    const handleSubmit = async (e) =>{
-      e.preventDefault();
-      //location not needed for data submission
-      //deubgger
-      if(formSubmitted) {
-        console.log("Form already submitted. Preventing multiple submissions.");
-        return;
-    }
-      setFormSubmitted(true);
-      // only one event
-      const event = calendarEvents[0];
-      // formatted separately so they're not in an array
-      const formatStart = format(event.start, 'yyyy-MM-dd HH:mm:ss');
-      const formatEnd =format (event.start, 'yyyy-MM-dd HH:mm:ss');
-      // checking if a user is insured
-      const isInsured = insuranceName !== '' ? 1: 0;
-      console.log("Patient is insured: ", isInsured);
-      const formData = {
-        symptoms: selectedSymptoms,
-        specializations: selectedSpecialization,
-        hospital: selectedHospital,
-        room: selectedRoomNumber,
-        gender: selectedGender,
-        ssn,
-        medicalHistory,
-        insuranceName,
-        isInsured,
-        phoneNumber,
-        streetAddress,
-        state,
-        zipCode,
-        startEvent: formatStart,
-        endEvent: formatEnd
+useEffect(() => {
+  axios.get('http://localhost:8800/appointment')
+    .then(response => {
+      const data = response.data;
+      if (Array.isArray(data)) {
+        const formattedAppointments = formatAppointmentsForCalendar(data);
+        setCalendarEvents(formattedAppointments);
+      } else {
+        console.error("Data received is not an array:", data);
+      }
+    })
+    .catch(error => console.error(error));
+}, []);
+  //another way of fetching data for appointment
+  const [appointments, setAppointments] = useState([]);
+  useEffect(() =>{
+    const getAppointment= async ()=>{
+      try{
+          const res= await fetch('http://localhost:8800/appointment_info');
+          if(!res.ok){
+              throw new Error('Network error')
+          }
+          const getData= await res.json();
+          setAppointments(getData);
+          console.log(getData);
+      } catch(error){
+          console.error("Couldn't fetch hospital: ", error);
+      }
       };
-      console.log("Information to be submitted...");
-      console.log("Symptom List: ", selectedSymptoms);
-      console.log("Room: ", selectedRoomNumber);
-      console.log("SSN: ", ssn);
-      console.log("Medical History: ", medicalHistory);
-      console.log("Insurance Name: ", insuranceName);
-      console.log("Street Address: ", streetAddress);
-      console.log("Phone Number: ", phoneNumber);
-      console.log("State: ", state);
-      console.log("Zip Code: ", zipCode);
-      console.log(formData);
-      //navigate =('/dashboard-patient');
+      getAppointment();
+    }, []);
 
-    }
-    
+  //dropdown for appointment
+  const appointmentDropDown = useDropDown();
+  //find doctor information based on apppointment_id chosen
+  const[selectedAppointment, setSelectedAppointment] = useState([]);
+  const[selectedAppointmentID, setSelectedAppointmentID] = useState(null);
+  //alows only one hospital selection alongside with it's location at a time
+  const handleAppointmentSelect = async (appointment_id) => {
+    setSelectedAppointmentID(appointment_id);
+  
+    // variable assigned
+    // look through appointments that are fetched to return element if same id selected by appointment
+    const appointment_selection = appointments.find(appointment =>  appointment.appointment_id === appointment_id);
+    setSelectedAppointment(appointment_selection);
+  
 
-
+  }
     return (
       <div className ="home">
-        <form onSubmit={handleSubmit}>
         <div className= "header">
         <div className="left-section">
           <img className="symbol" src={caduceus}/>
@@ -232,223 +109,90 @@ const Booking_View_D = () => {
       <div className= "blue-container">
             <div className = "first-header-container">
               <div className = "blue-header">
-                Book appointment
+                Appointments
               </div>
                   <img className = "icon-match-header" src={calendar_icon}></img>
               </div>
-              <p className= "blue-section-headers">Patient Information</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                        Email:
-                    </p>
-                    <input className="email-bubble" type="text" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>
-                  </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                    <span className= "gender-text"> Gender: </span>
-                    </p>
-                    <div className="gender-container">
-                        <button type="button" className="select-gender" onClick={genderDropDown.toggleList}>
-                          Select Gender
-                          <img className="down-pic" src={down} alt="Down" />
-                        </button>
-                        <ul className="list-items" style={{ display: genderDropDown.isOpen ? 'block' : 'none' }}>
-                          {genderOptions.map((gender_option) => (
-                            <li key={gender_option.value} className="item" onClick={() => handleGenderSelect(gender_option.value)}>
-                              <span className="checkboxes">
-                                {/* only shows checks for selected genders*/}
-                                <img className={`check-pic ${selectedGender === gender_option.value ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                              </span>
-                              {/* only gender name is shown to user */}
-                              <span className="item-text">{gender_option.gender}</span>
-                            </li>
-                            ))}
-                        </ul>
-                    </div>
-                  </div>
-                  <div className = "bubbles3">
-                    <p className="bubbles-header">
-                        SSN:
-                    </p>
-                    <input className="SSN-bubble" type="text" name="SSN" pattern="^\d{3}\d{2}\d{4}$" required 
-                    onChange={(e) =>setSSN(e.target.value)}/>
-                  </div>
-              </div>
+              <p className= "blue-section-headers">Appointment Information</p><br></br>
+              <div className="calendar-perspective"> 
+                <Calendar
+                  localizer={localizer}
+                  events={calendarEvents}
+                  startAccessor="start"
+                  endAccessor="end"
+                  style={{ height: 500 }}
+                  />
 
-              <p className= "blue-section-headers">Medical Concerns</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                      Symptoms:
-                    </p>
-                    <div className="symptoms-container">
-                      <button type="button" className="select-symptom" onClick={symptomDropDown.toggleList}>
-                          Select Symptoms
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      {/*Mapping symptom ids to names */}
-                       <ul className="list-items" style={{ display: symptomDropDown.isOpen ? 'block' : 'none' }}>
-                          {
-                            Array.isArray(symptoms) && symptoms.map((symptom) => (
-                              <li key={symptom.symptom_id} className="item" onClick={() => handleSymptomSelect(symptom.symptom_id)}>
-                                <span className="checkboxes">
-                                  <img className={`check-pic ${selectedSymptoms.includes(symptom.symptom_id) ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10"/>
-                                </span>
-                                 <span className="item-text">{symptom.symptom_name}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>  
-                      </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                        Medical History:
-                    </p>
-                    <input className="medical-history-bubble" type="text" name="history" pattern="^[a-zA-Z0-9._\s]{1,255}$" required 
-                           onChange={(e) =>setMedicalHistory(e.target.value)}/>
-                  </div>
-                
               </div>
-
-              <p className= "blue-section-headers">Insurance Information</p><br></br>
+              <p className= "blue-section-headers">Appointment Information</p><br></br>
               <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
+                <div className = "bubbles1">
                     <p className="bubbles-header">
-                        Insurance Name:
-                    </p>
-                    <input className="insurance-bubble" type="text" name="insurance" pattern="^[A-Za-z &\-]+$" required 
-                           onChange={(e) =>setInsuranceName(e.target.value)}/>
-                  </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                        Phone Number:
-                    </p>
-                    <input className="phone-bubble" type="text" name="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}$" required 
-                          onChange={(e) =>setPhoneNumber(e.target.value)}/>
-                  </div>
-                  </div>
-                  <div className= "patient-info-bubbles">
-                  <div className = "bubbles3">
-                    <p className="bubbles-header">
-                        Street Address:
-                    </p>
-                    <input className="street-bubble" type="text" name="street" required 
-                            onChange={(e) =>setStreetAddress(e.target.value)}/>
-                  </div>
-                  <div className = "bubbles4">
-                    <p className="bubbles-header">
-                        State:
-                    </p>
-                    <input className="state-bubble" type="text" name="state" pattern="pattern=[A-Za-z]{2}$" required 
-                            onChange={(e) =>setState(e.target.value)}/>
-                  </div>
-                  <div className = "bubbles5">
-                    <p className="bubbles-header">
-                        ZIP Code:
-                    </p>
-                    <input className="zip-bubble" type="text" name="zip" pattern="[0-9]{5}$" required 
-                      onChange={(e) =>setZipCode(e.target.value)}/>
-                  </div>
-              </div>
-            
-              <p className= "blue-section-headers">Selection</p><br></br>
-              <div className= "patient-info-bubbles">
-              
-                  <div className = "bubbles1">
-                    <p className="bubbles-header">
-                        Doctor Speciality:
-                    </p>
-                    <div className="specializations-container">
-                      <button type="button" className="select-specialization" onClick={specializationDropDown.toggleList}>
-                    Select Specialization
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: specializationDropDown.isOpen ? 'block' : 'none' }}>
-                        {mockSpecializations.map((specialization) => (
-                          <li key={specialization.doctor_id} className="item" onClick={() => handleSpecializationSelect(specialization.doctor_id)}>
-                            <span className="checkboxes">
-                              {/*Ensuring the checkmark is small and only shows checks for selected specializations*/}
-                              <img className={`check-pic ${selectedSpecialization === specialization.doctor_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{specialization.specialization}</span>
-                          </li>
-                          ))}
-                        </ul>
-                      </div>
-                      </div>
-                    <div className = "bubbles2">
-                    <p className="bubbles-header">
-                        Hospital:
                     </p>
                     <div className="hospitals-container">
-                      <button type="button" className="select-hospital" onClick={hospitalDropDown.toggleList}>
-                        Select Hospital
+                      <button type="button" className="select-hospital" onClick={appointmentDropDown.toggleList}>
+                        Select Appointment
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
-                      <ul className="list-items" style={{ display: hospitalDropDown.isOpen ? 'block' : 'none' }}>
-                        { Array. isArray(hospitals) && hospitals.map((hospital) => (
-                          <li key={hospital.hospital_id} className="item" onClick={() => handleHospitalSelect(hospital.hospital_id)}>
+                      <ul className="list-items" style={{ display: appointmentDropDown.isOpen ? 'block' : 'none' }}>
+                        { Array. isArray(appointments) && appointments.map((appointment) => (
+                          <li key={appointment.appointment_id} className="item" onClick={() => handleAppointmentSelect(appointment.appointment_id)}>
                             <span className="checkboxes">
-                              {/* Show checkmark if hospital is selected */}
-                              <img className={`check-pic ${selectedHospitalID === hospital.hospital_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                              {/* Show checkmark if appointment is selected */}
+                              <img className={`check-pic ${selectedAppointmentID === appointment.appointment_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                             </span>
-                            <span className="item-text">{hospital.hospital_name}</span>
+                            <span className="item-text">{appointment.appointment_id}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                  <div className ="bubbles3">
-                    <p className="bubbles-header">
-                        Room Number:
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Doctor ID:
                     </p>
-                    <div className="room-container">
-                      <button type="button" className="select-room" onClick={roomDropDown.toggleList}>
-                        Select Room
-                        <img className="down-pic" src={down} alt="Down" />
-                      </button>
-                      <ul className="list-items" style={{ display: roomDropDown.isOpen ? 'block' : 'none' }}>
-                        { selectedRoom.map((room) => (
-                          <li key={room.room_number} className="item" onClick={() => handleRoomSelect(room.room_number)}>
-                            <span className="checkboxes">
-                              {/* Show checkmark if room number is selected */}
-                              <img className={`check-pic ${selectedRoomNumber === room.room_number ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{room.room_number}</span>
-                          </li>
-                        ))}
-                        
-                      </ul>
-                    
-                    </div>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_id} </div>
+                  </div>
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Doctor First Name:
+                    </p>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_first_name} </div>
+                  </div>
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Doctor Last Name:
+                    </p>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_last_name} </div>
                   </div>
                 </div>
+                <div className = "patient-container-right">
                 <div className= "patient-info-bubbles">
-                  
-                    
-                  <div className ="bubbles6">
+                <div className ="bubbles2">
                     <p className="bubbles-header2">
-                        Location:
+                        Patient ID:
                     </p>
-                    <div className= "hospital-location" style={{width: '100%', height: '100%'}}> {selectedHospital && selectedHospital.street_address} </div>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_id} </div>
+                  </div>
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Patient First Name:
+                    </p>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_first_name} </div>
+                  </div>
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Patient Last Name:
+                    </p>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_last_name} </div>
                   </div>
                   </div>
-              
+                </div>
 
-              <p className= "blue-section-headers">Preferred Date & Time</p><br></br>
               
-              <div><CalendarComponent onEventChange={handleCalendarEventChange}/>
-              </div>
-                          
-              <button className= "schedule-appt-button" onClick={(e) => handleSubmit(e)}>Schedule Appointment</button>
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <div className="moving-go-back"><p><a className= "dashboard-link" href="#">Go Back</a></p></div>
         </div>
     </div>
-    </form>
  </div>   
     );
 };

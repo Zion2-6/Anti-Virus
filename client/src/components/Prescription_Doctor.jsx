@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {Link , useNavigate} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
@@ -12,56 +12,56 @@ import doctor_icon from './pictures/doctor.png'
 
 
 const Prescription_Doctor = () => {
-  const mockPatients = [
-    {
-      patient_id: 1,
-      first_name: 'Lele',
-      last_name: 'Ponce',
-      symptoms: ['Fever', 'Cough', 'Sore throat']
-    },
-    {
-      patient_id: 2,
-      first_name: 'Billy',
-      last_name: 'Bob',
-      symptoms: ['Headache', 'Muscle aches', 'Fatigue']
-    }
-  ]
+  
     //const navigate = useNavigate();
     // setting selections
-    const[selectedPatientObj ,setSelectedPatientObj] = useState(null);
-    const[selectedFirstName, setSelectedFirstName] = useState('');
-    const[selectedLastName, setSelectedLastName] = useState('');
-    const[selectedSymptoms, setSelectedSymptoms] =useState([]);
     const[drug, setDrug] = useState('');
     const[dosage, setDosage] = useState('');
     const[fee, setFee] = useState('');
     const[additionalNotes, setNotes] = useState('');
     
+    
+    //another way of fetching data for appointment
+  const [patients, setPatients] = useState([]);
+  useEffect(() =>{
+    const getPatient= async ()=>{
+      try{
+          const res= await fetch('http://localhost:8800/patient_prescription_info');
+          if(!res.ok){
+              throw new Error('Network error')
+          }
+          const getData= await res.json();
+          // maps through the 
+          const parseDataObjects = getData.map(patient =>({
+
+            ...patient,
+            //parsing the issue 
+            symptoms: JSON.parse(patient.symptoms)
+          }))
+          setPatients(parseDataObjects);
+          console.log(parseDataObjects);
+      } catch(error){
+          console.error("Couldn't fetch patient: ", error);
+      }
+      };
+      getPatient();
+    }, []);
     // patient list  
     const patientDropDown = useDropDown();
-
+    //makes sure that symptoms is an empty array
+    const[selectedPatient, setSelectedPatient] = useState({ symptoms: [] });
+    const[selectedPatientID, setSelectedPatientID] = useState(null);
     //allows only one patient id selection with their first name,last name, and symptoms, 
-    // var assigned through mockpatients array to return element if same match
-    const handlePatientSelect = (patient_id) => {
-      const chosenPatient = mockPatients.find((patient_obj) =>
-                              patient_obj.patient_id === patient_id);
-      console.log(chosenPatient);
-      if(chosenPatient){
-        setSelectedPatientObj(chosenPatient);
-        setSelectedSymptoms(chosenPatient.symptoms);
-        setSelectedFirstName(chosenPatient.first_name);
-        setSelectedLastName(chosenPatient.last_name);
-        
-        console.log(chosenPatient.symptoms);
-      } else {
-        console.error("Patient with ID ${patient_id} not found");
-        //reset values
-        setSelectedPatientObj(null);
-        setSelectedFirstName('');
-        setSelectedLastName('');
+    // var assigned through patients array to return element if same match
+    const handlePatientSelect =  async (patient_id) => {
+      setSelectedPatientID (patient_id);
+      const patient_selection = patients.find((patient) =>
+                              patient.patient_id === patient_id);
+      setSelectedPatient(patient_selection);
+      
       }
 
-    }
+    
     //checks if form is submitted default is false
     const[formSubmitted, setFormSubmitted] = useState(false);
 
@@ -77,16 +77,16 @@ const Prescription_Doctor = () => {
     
     
       const formData = {
-        patient: selectedPatientObj?.patient_id,
+        selectedPatientID,
         drug,
         dosage,
         fee,
         additionalNotes,
       }
       console.log("Information to be submitted...");
-      
-      console.log("First Name: ", selectedFirstName);
-      console.log("Last Name: ", selectedLastName);
+      console.log("Patient ID: ", selectedPatientID);
+      console.log("First Name: ", selectedPatient.patient_first_name);
+      console.log("Last Name: ", selectedPatient.patient_last_name);
       console.log("Drug: ", drug);
       console.log("Dosage: ", dosage);
       console.log("Fee: ", fee);
@@ -96,18 +96,6 @@ const Prescription_Doctor = () => {
 
     };
 
-  //allows multiple symptom selections
-  const handleSymptomSelect =(symptom_id) =>{
-
-    setSelectedSymptoms((currSelectedSymptoms) => {
-      if(currSelectedSymptoms.includes(symptom_id)){
-      return currSelectedSymptoms.filter(id => id !== symptom_id);
-    } else {
-      return[...currSelectedSymptoms, symptom_id];
-    }
-
-  });
-};
     return (
       <div className ="home">
         <form onSubmit={handleSubmit}>
@@ -151,11 +139,11 @@ const Prescription_Doctor = () => {
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
                       <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
-                        {mockPatients.map((patient) => (
+                        {patients.map((patient) => (
                           <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
                             <span className="checkboxes">
                               {/* Show checkmark if patient_id is selected */}
-                              <img className={`check-pic ${selectedPatientObj && selectedPatientObj.patient_id === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                              <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                             </span>
                             <span className="item-text">{patient.patient_id}</span>
                           </li>
@@ -167,13 +155,13 @@ const Prescription_Doctor = () => {
                     <p className="bubbles-header">
                         First Name: 
                     </p>
-                    {selectedFirstName}
+                    {selectedPatient && selectedPatient.patient_first_name}
                   </div>
                   <div className = "bubbles3">
                     <p className="bubbles-header">
                         Last Name:
                     </p>
-                    {selectedLastName}
+                    {selectedPatient && selectedPatient.patient_last_name}
                   </div>
                   
               </div>
@@ -183,31 +171,11 @@ const Prescription_Doctor = () => {
                 <p className="bubbles-header">
                   Symptoms:
                 </p>
-                {selectedSymptoms.join(', ')}
+                {selectedPatient.symptoms.map((symptom, attr)=>(
+                  <div key={attr}>{symptom.symptom_name}</div>
+                ))}
                 </div>
                 </div>
-                {/*
-                <div className="symptoms-container">
-                  <button type="button" className="select-symptom" onClick={symptomDropDown.toggleList}>
-                      Selected Symptoms
-                    <img className="down-pic" src={down} alt="Down" />
-    </button> */}
-                  {/*Mapping symptom ids to names */}
-                 {/*  <ul className="list-items" style={{ display: symptomDropDown.isOpen ? 'block' : 'none' }}>
-                      {
-                        mockSymptoms.map((symptom) => (
-                          <li key={symptom.symptom_id} className="item" onClick={() => handleSymptomSelect(symptom.symptom_id)}>
-                            <span className="checkboxes">
-                              <img className={`check-pic ${selectedSymptoms.includes(symptom.symptom_id) ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10"/>
-                            </span>
-                             <span className="item-text">{symptom.symptom_name}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>  
-                  </div>
-                  </div>
-                      */}
               <p className= "gray-section-headers">Prescription Drugs</p><br></br>
               <div className= "patient-info-bubbles">
               

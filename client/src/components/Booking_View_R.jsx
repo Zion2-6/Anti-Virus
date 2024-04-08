@@ -108,7 +108,7 @@ useEffect(() => {
       <div className= "blue-container">
             <div className = "first-header-container">
               <div className = "blue-header">
-                Book appointment
+                Appointments
               </div>
                   <img className = "icon-match-header" src={calendar_icon}></img>
               </div>
