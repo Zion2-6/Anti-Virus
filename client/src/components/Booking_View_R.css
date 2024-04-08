@@ -1,0 +1,17 @@
+.patient-container-right{
+  margin-left:295px;
+}
+.moving-go-back{
+  margin-top:200px;
+}
+.calendar-perspective{
+  height: 500px;
+  min-width: 600px;
+  justify-content:center;
+}
+.shift-symptoms{
+  margin-right: 2px
+}
+.shift-text-right{
+  margin-left:18px;
+}

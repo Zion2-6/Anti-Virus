@@ -130,10 +130,8 @@ const Signup = () => {
         </div>
         <div className="user-container">
         <div className ="bubbles3">
-                    <p className="bubbles-header">
-                    <span className= "user-role-text"> User Roles: </span>
-                    </p>
-          
+            <p className="bubbles-header">
+            </p>
             <button type="button" className="select-user-role" onClick={userRoleDropDown.toggleList}>
                 Select User Role
               <img className="down-pic" src={down} alt="Down" />
@@ -142,10 +140,10 @@ const Signup = () => {
                   {userRoleOptions.map((role_option) => (
                     <li key={role_option.value} className="item" onClick={() => handleUserRoleSelect(role_option.value)}>
                        <span className="checkboxes">
-                          {/* only shows checks for selected genders*/}
+                          {/* only shows checks for selected user role*/}
                            <img className={`check-pic ${selectedUserRole === role_option.value ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                         </span>
-                          {/* only gender name is shown to user */}
+                          {/* only user role is shown to user */}
                         <span className="item-text">{role_option.user_role}</span>
                       </li>
                 ))}
