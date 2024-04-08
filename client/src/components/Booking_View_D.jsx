@@ -51,27 +51,34 @@ useEffect(() => {
 }, []);
   //another way of fetching data for appointment
   const [appointments, setAppointments] = useState([]);
-  useEffect(() =>{
-    const getAppointment= async ()=>{
-      try{
-          const res= await fetch('http://localhost:8800/appointment_info');
-          if(!res.ok){
-              throw new Error('Network error')
-          }
-          const getData= await res.json();
-          setAppointments(getData);
-          console.log(getData);
-      } catch(error){
-          console.error("Couldn't fetch hospital: ", error);
+  useEffect (() =>{
+    const getAppointment = async ()=>{
+    try{
+      const res= await fetch('http://localhost:8800/full_appointment_info');
+      if(!res.ok){
+          throw new Error('Network error')
       }
-      };
+      const getData= await res.json();
+      // maps through the 
+      const parseDataObjects = getData.map(appointment =>({
+
+        ...appointment,
+        //parsing the issue 
+        symptoms: JSON.parse(appointment.symptoms)
+      }))
+      setAppointments(parseDataObjects);
+      console.log(parseDataObjects);
+    } catch(error){
+      console.error("Couldn't fetch patient: ", error);
+     }
+    }
       getAppointment();
     }, []);
 
   //dropdown for appointment
   const appointmentDropDown = useDropDown();
   //find doctor information based on apppointment_id chosen
-  const[selectedAppointment, setSelectedAppointment] = useState([]);
+  const[selectedAppointment, setSelectedAppointment] = useState({ symptoms: [] });
   const[selectedAppointmentID, setSelectedAppointmentID] = useState(null);
   //alows only one hospital selection alongside with it's location at a time
   const handleAppointmentSelect = async (appointment_id) => {
@@ -147,44 +154,61 @@ useEffect(() => {
                       </ul>
                     </div>
                   </div>
-                  <div className ="bubbles2">
-                    <p className="bubbles-header2">
-                        Doctor ID:
+                  <div className ="bubbles1">
+                    <p className="bubbles-header1">
+                        <span className= "shift-text-right">Doctor ID:</span>
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_id} </div>
                   </div>
                   <div className ="bubbles2">
                     <p className="bubbles-header2">
-                        Doctor First Name:
+                    <span className= "shift-text-right">Doctor First Name:</span>  
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_first_name} </div>
                   </div>
-                  <div className ="bubbles2">
-                    <p className="bubbles-header2">
-                        Doctor Last Name:
+                  <div className ="bubbles3">
+                    <p className="bubbles-header3">
+                    <span className= "shift-text-right">Doctor Last Name:</span>
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.doctor_last_name} </div>
                   </div>
                 </div>
                 <div className = "patient-container-right">
                 <div className= "patient-info-bubbles">
-                <div className ="bubbles2">
-                    <p className="bubbles-header2">
-                        Patient ID:
+                <div className ="bubbles1">
+                    <p className="bubbles-header1">
+                    <span className= "shift-text-right"> Patient ID:</span>
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_id} </div>
                   </div>
                   <div className ="bubbles2">
                     <p className="bubbles-header2">
-                        Patient First Name:
+                    <span className= "shift-text-right">Patient First Name:</span>
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_first_name} </div>
                   </div>
-                  <div className ="bubbles2">
-                    <p className="bubbles-header2">
-                        Patient Last Name:
+                  <div className ="bubbles3">
+                    <p className="bubbles-header3">
+                    <span className= "shift-text-right">Patient Last Name:</span>
                     </p>
                     <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.patient_last_name} </div>
+                  </div>
+                  </div>
+
+              <div className= "patient-info-bubbles">
+                <div className = "bubbles1">
+                  <p className="bubbles-header">
+                    Symptoms:
+                  </p>
+                  {selectedAppointment.symptoms.map((symptom, attr)=>(
+                    <div key={attr}>{symptom.symptom_name}</div>
+                  ))}
+                </div>
+                  <div className ="bubbles2">
+                    <p className="bubbles-header2">
+                        Medical History:
+                    </p>
+                    <div className= "doctor-id" style={{width: '100%', height: '100%'}}> {selectedAppointment && selectedAppointment.medical_history} </div>
                   </div>
                   </div>
                 </div>
