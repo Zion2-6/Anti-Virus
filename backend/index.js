@@ -91,6 +91,85 @@ app.get("/patient", (req, res)=> {
     return res.json(data)
   })
 })
+app.get("/patient_id_name", (req, res)=> {
+  const q = 
+  `
+  SELECT 
+    p.patient_id, 
+    pe.first_name AS patient_first_name, 
+    pe.last_name AS patient_last_name
+  FROM patient p
+  INNER JOIN person pe ON p.user_id = pe.user_id;`
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+app.get("/patient_symptom", (req, res)=> {
+  const q = 
+  `
+  SELECT 
+    p.patient_id, 
+    s.symptom_id,
+    s.symptom_name
+  FROM  patient p
+    INNER JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+    INNER JOIN symptom s ON ps.symptom_id = s.symptom_id;`
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+//an array created called symptoms with objects: symptom_id, and symptom_name
+//helps simplify pulling information
+app.get("/patient_prescription_info", (req, res)=> {
+  const q = 
+  `
+   SELECT 
+        p.patient_id, 
+        pe.first_name AS patient_first_name, 
+        pe.last_name AS patient_last_name,
+        JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'symptom_id', ps.symptom_id, 
+
+                'symptom_name', s.symptom_name
+            )
+        ) AS symptoms
+    FROM patient p
+    JOIN person pe ON p.user_id = pe.user_id
+    LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+    LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
+    GROUP BY p.patient_id;`
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
+app.get("/patient_prescription_info_fetch", (req, res)=> {
+  const q = 
+  `
+  SELECT 
+    p.patient_id,
+    pe.first_name AS patient_first_name, 
+    pe.last_name AS patient_last_name,
+    pr.prescription_id,
+    pr.medicine_name,
+    pr.dosage_desc,
+    pr.prescription_fee,
+    pr.additional_notes
+  FROM patient p
+    JOIN person pe ON p.user_id = pe.user_id
+    LEFT JOIN prescription pr ON p.patient_id = pr.patient_id
+    ORDER BY p.patient_id;`
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
+
 app.get("/person", (req, res)=> {
   const q = "SELECT * FROM person"
   db.query(q, (err,data)=> {
@@ -126,6 +205,39 @@ app.get("/appointment_info", (req, res)=> {
   JOIN person p ON pt.user_id = p.user_id
   JOIN doctor d ON  a.doctor_id = d.doctor_id
   JOIN person doc ON d.user_id = doc.user_id;`
+  db.query(q, (err,data)=> {
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+app.get("/full_appointment_info", (req, res)=> {
+  const q =
+  `SELECT 
+    a.appointment_id,
+    d.doctor_id,
+    doc.first_name AS doctor_first_name,
+    doc.last_name AS doctor_last_name,
+    p.patient_id,
+    pat.first_name AS patient_first_name,
+    pat.last_name AS patient_last_name,
+    p.medical_history,
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'symptom_id', s.symptom_id,
+            'symptom_name', s.symptom_name
+        )
+    ) AS symptoms
+  FROM appointment a
+  JOIN doctor d ON a.doctor_id = d.doctor_id
+  JOIN person doc ON d.user_id = doc.user_id
+  JOIN patient p ON a.patient_id = p.patient_id
+  JOIN person pat ON p.user_id = pat.user_id
+  LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+  LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
+  GROUP BY 
+    a.appointment_id,
+    d.doctor_id,
+    p.patient_id;`
   db.query(q, (err,data)=> {
     if(err) return res.json(err)
     return res.json(data)
