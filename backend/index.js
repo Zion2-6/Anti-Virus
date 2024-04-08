@@ -277,6 +277,10 @@ app.get("/patient_records", (req, res) => {
   });
 });
 
+const generateID = (role) => {
+  const timestamp = new Date().getTime();
+  return `${role.slice(0, 3)}-${timestamp}`;
+};
 
 
 app.post("/signup", (req, res) => {
@@ -295,7 +299,7 @@ app.post("/signup", (req, res) => {
     dob
   } = req.body;
 
-  // Insert the user data into the person table
+  // First, insert the user data into the person table
   db.query(
     `INSERT INTO person (username, user_password, user_role, email, first_name, last_name, phone_number, date_of_birth, age, street_address, state_address, zipcode_address) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -305,7 +309,43 @@ app.post("/signup", (req, res) => {
         console.error(err);
         return res.status(500).json({ error: "Error registering user" });
       }
-      return res.status(200).json({ message: "User registered successfully" });
+
+      // Retrieve the user_id of the newly inserted user
+      const userId = result.insertId;
+
+      const uniqueId = generateID(userRole);
+
+      // Insert the user_id into the appropriate role table based on userRole
+      let roleIdColumn, roleTable;
+      switch (userRole) {
+        case 'Patient':
+          roleIdColumn = 'patient_id';
+          roleTable = 'patient';
+          break;
+        case 'Doctor':
+          roleIdColumn = 'doctor_id';
+          roleTable = 'doctor';
+          break;
+        case 'Receptionist':
+          roleIdColumn = 'receptionist_id';
+          roleTable = 'receptionist';
+          break;
+        default:
+          return res.status(400).json({ error: 'Invalid user role' });
+      }
+
+
+      db.query(
+        `INSERT INTO ${roleTable} (user_id, ${roleIdColumn}) VALUES (?, ?)`,
+        [userId, uniqueId],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error registering user role" });
+          }
+          return res.status(200).json({ message: "User registered successfully" });
+        }
+      );
     }
   );
 });
