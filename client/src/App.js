@@ -34,7 +34,7 @@ function App() {
         <Route path= "/dashboard-patient/book-appointment/:user_id/:patient_id" element={<Book_Appointment/>}/>
         <Route path= "/Calendar" element={<CalendarComponent/>}/>
         <Route path= "/book-appointment" element={<Home_Appointment/>}/>
-        <Route path= "/dashboard-doctor/prescription/" element={<Prescription_Doctor/>}/>
+        <Route path= "/dashboard-doctor/prescription/:user_id/:doctor_id" element={<Prescription_Doctor/>}/>
         <Route path= "/dashboard-doctor/modify-prescription/" element={<All_Prescription/>}/>
         <Route path= "/dashboard-patient/prescription/" element={<Prescription_Patient/>}/>
         <Route path= "/dashboard-doctor/patient-records/" element={<Patient_Record_View_D/>}/>

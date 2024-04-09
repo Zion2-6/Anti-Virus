@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {Link , useNavigate} from "react-router-dom"
+import {Link , useNavigate, useParams} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import './Prescription_Doctor.css'
@@ -9,11 +9,11 @@ import check from './pictures/check-2.png'
 import down from './pictures/down.png'
 import prescription from './pictures/prescription.png'
 import doctor_icon from './pictures/doctor.png'
-
+import axios from 'axios'
 
 const Prescription_Doctor = () => {
   
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
     // setting selections
     const[drug, setDrug] = useState('');
     const[dosage, setDosage] = useState('');
@@ -61,7 +61,7 @@ const Prescription_Doctor = () => {
       
       }
 
-    
+      const{ doctor_id } = useParams();
     //checks if form is submitted default is false
     const[formSubmitted, setFormSubmitted] = useState(false);
 
@@ -77,13 +77,15 @@ const Prescription_Doctor = () => {
     
     
       const formData = {
-        selectedPatientID,
-        drug,
-        dosage,
-        fee,
-        additionalNotes,
+        doctor_id: doctor_id,
+        patient: selectedPatientID,
+        drug: drug,
+        dosage: dosage,
+        fee: fee,
+        additionalNotes: additionalNotes,
       }
       console.log("Information to be submitted...");
+      console.log("Doctor ID: ", doctor_id);
       console.log("Patient ID: ", selectedPatientID);
       console.log("First Name: ", selectedPatient.patient_first_name);
       console.log("Last Name: ", selectedPatient.patient_last_name);
@@ -93,7 +95,13 @@ const Prescription_Doctor = () => {
       console.log("Additional Notes: ", additionalNotes);
       console.log(formData);
      // navigate('/dashboard-doctor');
-
+     try {
+      const response = await axios.post('http://localhost:8800/dashboard-doctor/prescription/', formData);
+      console.log('Success:', response.data);
+      navigate("/");
+  } catch (error) {
+      console.error('Error Message:', error);
+  }
     };
 
     return (

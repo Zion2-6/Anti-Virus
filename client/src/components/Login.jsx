@@ -27,7 +27,7 @@ const Login = () => {
         if (data.user_role === 'Patient') {
           navigate(`/dashboard-patient/book-appointment/${data.user_id}/${data.patient_id}`);
         } else if (data.user_role === 'Doctor') {
-          navigate(`/dashboard-doctor/appointments/${data.user_id}/${data.doctor_id}`);
+          navigate(`/dashboard-doctor/prescription/${data.user_id}/${data.doctor_id}`);
         } else if (data.user_role === 'Receptionist') {
           navigate(`/dashboard-receptionist/appointments/${data.user_id}/${data.receptionist_id}`);
         }
