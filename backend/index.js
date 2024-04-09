@@ -1,6 +1,7 @@
 import express from "express"
 import mysql from "mysql"
 import cors from "cors";
+import bcrypt from 'bcrypt';
 const app = express()
 
 const db = mysql.createConnection({
@@ -289,7 +290,7 @@ app.post("/signup", (req, res) => {
     lastname,
     email,
     username,
-    pass,
+    password,
     street,
     state,
     zip,
@@ -298,21 +299,27 @@ app.post("/signup", (req, res) => {
     userRole,
     dob
   } = req.body;
-
+  console.log("Received signup request:", req.body);
+  const saltRounds = 10;
+  bcrypt.hash(password, saltRounds, (err, hash) => { // Hash the password
+      console.log(`Hash: ${hash}`);
+    if (err) {
+        console.error("Error hashing password:", err);
+        return res.status(500).json("Error hashing password");
+    }
+    const q = `INSERT INTO person (username, user_password, user_role, email, first_name, last_name, phone_number, date_of_birth, age, street_address, state_address, zipcode_address) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [username, hash, userRole, email, firstname, lastname, phone, dob, age, street, state, zip];
   // First, insert the user data into the person table
-  db.query(
-    `INSERT INTO person (username, user_password, user_role, email, first_name, last_name, phone_number, date_of_birth, age, street_address, state_address, zipcode_address) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [username, pass, userRole, email, firstname, lastname, phone, dob, age, street, state, zip],
-    (err, result) => {
+  db.query(q, values, (err,result) => {
+    
       if (err) {
-        console.error(err);
+        console.error("Failed to insert into database", err);
         return res.status(500).json({ error: "Error registering user" });
       }
-
+      
       // Retrieve the user_id of the newly inserted user
       const userId = result.insertId;
-
       const uniqueId = generateID(userRole);
 
       // Insert the user_id into the appropriate role table based on userRole
@@ -344,11 +351,77 @@ app.post("/signup", (req, res) => {
             return res.status(500).json({ error: "Error registering user role" });
           }
           return res.status(200).json({ message: "User registered successfully" });
-        }
-      );
-    }
-  );
+        });
+    });
+  });
 });
+app.post('/login', (req,res) => {
+  const { email, password } = req.body;
+  console.log("Received login request:", req.body);
+  const q = "SELECT user_id, email, user_password, user_role FROM person WHERE email = ?";
+  db.query(q, [email], (err, data) =>{
+      if (err){
+          console.error("Error executing query:", err);
+          return res.status(500).json("Error executing query");
+      }
+      if (data.length > 0){
+          const hashedPassword = data[0].user_password;
+          console.log("Retrieved hashed password:", hashedPassword);
+          console.log("Input password:", password);
+          bcrypt.compare(password.toString(), hashedPassword, (err, result) => { // Ensure password is a string
+              if (err) {
+                  console.error("Error comparing passwords:", err);
+                  return res.status(500).json("Error comparing passwords");
+              }
+              console.log("Comparison result:", result);
+              // based on login
+              const user =data[0]
+              if (result) {
+                   // Get the user_id from the data
+                  let roleQuery= "";
+                  //look at the user_role data
+                  switch(user.user_role) {
+                      case 'Patient':
+                          roleQuery = "SELECT patient_id FROM patient WHERE user_id = ?";
+                          break;
+                      case 'Doctor':
+                          roleQuery = "SELECT doctor_id FROM doctor WHERE user_id = ?";
+                          break;
+                      case 'Receptionist':
+                          roleQuery = "SELECT receptionist_id FROM receptionist WHERE user_id = ?";
+                          break;
+                  } 
+                    if (roleQuery) {
+                      // look for the array of users
+                      db.query(roleQuery, [user.user_id], (err, dataRole) => {
+                        if(err || dataRole.length === 0){
+                          return res.status(500).json("Error finding role ID");
+                        } else {
+                          // since patient, doctor, and receptionist are upper case
+                          const lc_user_role = user.user_role.toLowerCase(); 
+                          const roleIDType = `${lc_user_role}_id`;
+                          // user_id and role_id 
+                          const findRoleID = dataRole[0][roleIDType];
+                          console.log(roleIDType);
+
+                          return res.json({status: "Success", user_id:user.user_id, user_role: user.user_role,[roleIDType]: findRoleID })
+                        }
+                      });
+                    }else {
+                      return res.status(400).json("invalid user role");
+                    }
+                  
+              } else {
+                  return res.json({ status: "Fail" });
+              }
+              
+          });
+      } else {
+          return res.json("Fail");
+      }
+  });
+});
+
 
 app.listen(8800, ()=>{
   console.log("Connected to backend!")
