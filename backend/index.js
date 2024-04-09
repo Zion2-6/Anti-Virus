@@ -2,6 +2,7 @@ import express from "express"
 import mysql from "mysql"
 import cors from "cors";
 import bcrypt from 'bcrypt';
+import { handleCreateAppointment } from "./services/appointment.service.js";
 const app = express()
 
 const db = mysql.createConnection({
@@ -422,6 +423,7 @@ app.post('/login', (req,res) => {
   });
 });
 
+app.post('/appointment', handleCreateAppointment);
 
 app.listen(8800, ()=>{
   console.log("Connected to backend!")
