@@ -8,6 +8,7 @@
 
 How To Run Files
 -------------------
+<br>The following steps are necessary for the functionality of the website to work correctly and display output.</Br>
 1. Clone or download the file in zip format
 2. Open two terminals use the (split terminal)
 3. On one terminal use the command: cd client
@@ -15,4 +16,4 @@ How To Run Files
 5. For the client terminal use the command: npm start
 6. For the backend terminal use the command: node index.js
 7. Missing packages? npm init or npm install <package_name>
-The following steps are necessary for the functionality of the website to work correctly and display output.
+
