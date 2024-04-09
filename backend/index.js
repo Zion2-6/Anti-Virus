@@ -423,7 +423,25 @@ app.post('/login', (req,res) => {
   });
 });
 
+
 app.post('/appointment', handleCreateAppointment);
+
+app.post("/dashboard-doctor/prescription", (req,res) => {
+  const{doctor_id, patient, dosage, fee, additionalNotes} =req.body
+  const values = [doctor_id, patient, dosage, fee, additionalNotes];
+  const prescriptionQuery = "INSERT INTO prescription (`doctor_id`, `patient_id`, `dosage_desc`, `prescription_fee`, `additional_notes`) VALUES(?, ?, ?, ?, ?);"; 
+  db.query(prescriptionQuery, values, (err, response) => {
+    if (err) {
+      //error 
+       res.status(500).send(err.message);
+    } else {
+      //successful
+      const prescription_id = response.insertId;
+      res.status(201).send({ prescription_id });
+    }
+  });
+});
+
 
 app.listen(8800, ()=>{
   console.log("Connected to backend!")
