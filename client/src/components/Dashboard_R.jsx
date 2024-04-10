@@ -7,6 +7,12 @@ import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
 import logged_in_icon from './pictures/logged-in2.png'
 import './Home.css'; // Make sure to import the updated CSS file
+<<<<<<< HEAD
+=======
+import bill_icon from './pictures/payment.png';
+import payment_icon from './pictures/payment-protection.png';
+import './Home.css'; 
+>>>>>>> c6af90a31e2cf0d2e89d806d3257d2845a5872db
 import './Book_Appointment.css';
 import './Dashboards.css';
 

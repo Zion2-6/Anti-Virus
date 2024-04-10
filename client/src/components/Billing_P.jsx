@@ -30,7 +30,7 @@ const Billing_P = () => {
 
   return (
     <div className="account-container2">
-      <div className="account-header">Billing for Receptionist</div>
+      <div className="account-header">Billing for Patient</div>
       <form action="" onSubmit={handleSubmit}>
         <div className="form-header">Patient Information</div>
         <div className="account-info">

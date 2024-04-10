@@ -24,12 +24,13 @@ import Dashboard_D from './components/Dashboard_D';
 import Dashboard_R from './components/Dashboard_R';
 import Billing_R from './components/Billing_R';
 import Billing_P from './components/Billing_P';
+import Payment from './components/Payment';
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path= "/" element={<Home/>}/>
+      <Route path= "/" element={<Home/>}/>
         <Route path="/login" element={<Login />} /> {/* Changed 'login' to 'Login' */}
         <Route path="/signup" element={<Signup />} /> {/* Changed 'login' to 'Login' */}
         <Route path="/forgot-password" element={<Forgot_Password/> }/>
@@ -53,7 +54,7 @@ function App() {
         <Route path= "/dashboard-receptionist/:user_id/:receptionist_id" element={<Dashboard_R/>}/>
         <Route path= "/dashboard-receptionist/billing/:user_id/:receptionist_id" element={<Billing_R/>}/>
         <Route path= "/dashboard-patient/bill/:user_id/:patient_id" element={<Billing_P/>}/>
-
+        <Route path= "/payment" element={<Payment/>}/>
 
       </Routes>
     </div>
