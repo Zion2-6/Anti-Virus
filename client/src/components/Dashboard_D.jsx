@@ -5,10 +5,10 @@ import doctor_icon from './pictures/doctor.png';
 import record_icon from './pictures/folder.png';
 import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
-import bill_icon from './pictures/payment.png';
-import payment_icon from './pictures/payment-protection.png';
+import logged_in_icon from './pictures/logged-in2.png'
 import './Home.css'; // Make sure to import the updated CSS file
 import './Book_Appointment.css';
+import './Dashboards.css';
 
 const Dashboard_P = () => {
     return (
@@ -19,8 +19,7 @@ const Dashboard_P = () => {
                     <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
                 </div>
                 <div className="right-section">
-                    <Link className="shadowing" to="/login">Log-in</Link><span className="stick-shadow"> |</span>
-                    <Link className="shadowing" to="/signup">Create an Account</Link>
+                <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
                 </div>
             </div>
             <div className="parent-container">
