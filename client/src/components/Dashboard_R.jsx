@@ -7,7 +7,7 @@ import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
 import bill_icon from './pictures/payment.png';
 import payment_icon from './pictures/payment-protection.png';
-import './Home.css'; // Make sure to import the updated CSS file
+import './Home.css'; 
 import './Book_Appointment.css';
 
 const Dashboard_P = () => {
