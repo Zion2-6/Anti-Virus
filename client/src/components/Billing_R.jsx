@@ -22,7 +22,7 @@ const Billing_R = () => {
     console.log('Patient ID:', values.patientId);
     console.log('Full Name:', values.fullName);
     // Redirect logic after submission
-    navigate('/login');
+    navigate('/billing-patient');
   };
 
   return (
