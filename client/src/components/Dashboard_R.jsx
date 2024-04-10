@@ -10,7 +10,7 @@ import payment_icon from './pictures/payment-protection.png';
 import './Home.css'; 
 import './Book_Appointment.css';
 
-const Dashboard_P = () => {
+const Dashboard_R = () => {
     return (
         <div className="home">
             <div className="header">
@@ -58,4 +58,4 @@ const Dashboard_P = () => {
     );
 };
 
-export default Dashboard_P;
+export default Dashboard_R;
