@@ -5,12 +5,18 @@ import receptionist_icon from './pictures/receptionist.png'
 import record_icon from './pictures/folder.png';
 import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
+<<<<<<< HEAD
 import logged_in_icon from './pictures/logged-in2.png'
 import './Home.css'; // Make sure to import the updated CSS file
+=======
+import bill_icon from './pictures/payment.png';
+import payment_icon from './pictures/payment-protection.png';
+import './Home.css'; 
+>>>>>>> 0106b3332ecfe164bfe73f5d000eea67c9b22a76
 import './Book_Appointment.css';
 import './Dashboards.css';
 
-const Dashboard_P = () => {
+const Dashboard_R = () => {
     return (
         <div className="home">
             <div className="header">
@@ -57,4 +63,4 @@ const Dashboard_P = () => {
     );
 };
 
-export default Dashboard_P;
+export default Dashboard_R;
