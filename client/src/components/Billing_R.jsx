@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './Signup.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const Billing_R = () => {
   const navigate = useNavigate();
-
+  const { user_id, receptionist_id } = useParams();
   const [values, setValues] = useState({
     patientId: '',
     fullName: '',
@@ -58,7 +58,7 @@ const Billing_R = () => {
         <div className="submission">
           <button className="create-acct-button">Confirm</button>
           <p className="cancel-link">
-            <Link className="shadowing" to="/">Cancel</Link>
+          <Link className="dashboard-link" to={`/dashboard-receptionist/${user_id}/${receptionist_id}`}>Cancel</Link>
           </p>
         </div>
       </form>

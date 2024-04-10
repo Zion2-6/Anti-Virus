@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {Link} from "react-router-dom"
+import {Link, useParams} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import './Prescription_Doctor.css'
@@ -9,8 +9,10 @@ import caduceus from './pictures/caduceus.png'
 import receptionist_icon from './pictures/receptionist.png'
 import folder_icon from './pictures/folder.png'
 import useDropDown from "./UseDropDown"
-
+import logged_in_icon from './pictures/logged-in2.png'
+import './Dashboards.css';
 const Patient_Record_View_R = () => {
+   const { user_id, receptionist_id } = useParams();
    //another way of fetching data for patient
    const [patients, setPatients] = useState([]);
    useEffect(() =>{
@@ -51,17 +53,16 @@ const Patient_Record_View_R = () => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={receptionist_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-receptionist/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-receptionist/appointments">Appointments</Link></p>
-          <p><a className= "dashboard-link" href="#">Billing</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-receptionist/patient-records/${user_id}/${receptionist_id}`}>Patient Records</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-receptionist/appointments/${user_id}/${receptionist_id}`}>Appointments</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-receptionist/billing/${user_id}/${receptionist_id}`}>Billing</Link></p>
       </div>
       
       
@@ -195,7 +196,7 @@ const Patient_Record_View_R = () => {
                   </div>
                   </div>
               <div className= "space-for-go-back">      
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <Link className="dashboard-link" to={`/dashboard-receptionist/${user_id}/${receptionist_id}`}>Go Back</Link>
             </div>
         </div>
     </div>

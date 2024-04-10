@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {Link} from "react-router-dom"
+import {Link, useParams} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import './Prescription_Doctor.css'
@@ -9,6 +9,8 @@ import caduceus from './pictures/caduceus.png'
 import doctor_icon from './pictures/doctor.png'
 import folder_icon from './pictures/folder.png'
 import useDropDown from "./UseDropDown"
+import logged_in_icon from './pictures/logged-in2.png'
+import './Dashboards.css';
 
 const Patient_Record_View_D = () => {
    //another way of fetching data for patient
@@ -43,6 +45,9 @@ const Patient_Record_View_D = () => {
        setSelectedPatient(patient_selection);
        
        }
+       const{ user_id, doctor_id } = useParams();
+       console.log(useParams());
+       console.log("user_id and patient_id from useParams:", user_id, doctor_id);   
     return (
       <div className ="home">
         <div className= "header">
@@ -51,18 +56,17 @@ const Patient_Record_View_D = () => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/appointments">Appointments</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/modify-prescription">Modify Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/patient-records/${user_id}/${doctor_id}`}>Patient Records</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/appointments/${user_id}/${doctor_id}`}>Appointments</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/prescription/${user_id}/${doctor_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/modify-prescription/${user_id}/${doctor_id}`}> Modify Prescription</Link></p>
       </div>
       
       <div className= "gray-container">
@@ -195,7 +199,7 @@ const Patient_Record_View_D = () => {
                   </div>
                   </div>
               <div className= "space-for-go-back">      
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <p><Link className="dashboard-link" to={`/dashboard-doctor/${user_id}/${doctor_id}`}>Go Back</Link></p>
             </div>
         </div>
     </div>

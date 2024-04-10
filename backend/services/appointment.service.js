@@ -71,12 +71,7 @@ const handleCreateAppointment = (req, res) => {
         return;
       }
       insurance_id = result.insertId;
-    });
-  } catch (error) {
-    console.log("Error creating insurance: ", error);
-  }
-
-  try {
+    
     const patientData = {
       user_id: user_id,
       SSN: ssn,
@@ -99,7 +94,8 @@ const handleCreateAppointment = (req, res) => {
         }
       }
     );
-  } catch (error) {
+  });
+ } catch (error) {
     console.log("Error updating patient: ", error);
   }
 

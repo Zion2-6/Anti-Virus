@@ -9,11 +9,13 @@ import patient_icon from './pictures/patient.png'
 import prescription from './pictures/prescription.png'
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-
+import { useParams } from "react-router-dom";
 
 
 const Prescription_Patient = () => {
-   //const navigate = useNavigate();
+    const{ user_id, patient_id } = useParams();
+    console.log(useParams());
+    console.log("user_id and patient_id from useParams:", user_id, patient_id);
     // setting selections
     const[drug, setDrug] = useState('');
     const[dosage, setDosage] = useState('');
@@ -107,10 +109,10 @@ const Prescription_Patient = () => {
       <div className = "dashboard-container">
       <img className = "dashboard-icon" src={patient_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/patient-record">Patient Record</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/prescription">Prescription</Link></p>
-          <p><a className= "dashboard-link" href="#">Bill</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/patient-record/${user_id}/${patient_id}`}>Patient Record</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
           <p><a className= "dashboard-link" href="#">Payment</a></p>
       </div>
       
@@ -133,16 +135,17 @@ const Prescription_Patient = () => {
                         <img className="down-pic" src={down} alt="Down" />
                       </button>
                       <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
-                        {patients.map((patient) => (
-                          <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
-                            <span className="checkboxes">
-                              {/* Show checkmark if patient_id is selected */}
-                              <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                            </span>
-                            <span className="item-text">{patient.patient_id}</span>
-                          </li>
-                        ))}
-                      </ul>
+                        {
+                          Array.isArray(patients) &&patients.map((patient) => (
+                            <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
+                              <span className="checkboxes">
+                                {/* Show checkmark if patient_id is selected */}
+                                <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                              </span>
+                              <span className="item-text">{patient.patient_id}</span>
+                            </li>
+                          ))}
+                        </ul>
                     </div>
                   </div>
                   <div className ="bubbles2">
@@ -188,7 +191,7 @@ const Prescription_Patient = () => {
                   </div>
                 </div>
               <div className= "space-for-go-back"> 
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Go Back</Link></p>
               </div> 
         </div>
     </div>

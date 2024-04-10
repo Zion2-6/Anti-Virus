@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react"
 import {Link, useNavigate, useParams} from "react-router-dom"
-
 import axios from "axios";
-
 import './Home.css'
 import './Book_Appointment.css'
 import useDropDown from "./UseDropDown";
@@ -17,7 +15,7 @@ import format from "date-fns/format";
 
 const Book_Appointment = () => {
   
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   //select through gender options
   const genderOptions =[
     {gender: 'Male', value:'M'},
@@ -50,10 +48,7 @@ const Book_Appointment = () => {
   const [rooms, setRooms] = useState([]);
   const [symptoms, setSymptoms] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const { patient_id } = useParams();
-  const { user_id } = useParams();
 
-  console.log("Patient ID: ", patient_id);
 
   // fetch data
   useEffect(() =>{
@@ -191,6 +186,10 @@ const Book_Appointment = () => {
     const handleCalendarEventChange = (finalEvent) => {
       setCalendarEvents(finalEvent);
     };
+
+    const{ user_id, patient_id } = useParams();
+    console.log(useParams());
+    console.log("user_id and patient_id from useParams:", user_id, patient_id);
     //checks if form is submitted default is false
     const[formSubmitted, setFormSubmitted] = useState(false);
     const handleSubmit = async (e) =>{
@@ -201,12 +200,13 @@ const Book_Appointment = () => {
         console.log("Form already submitted. Preventing multiple submissions.");
         return;
     }
+    
       setFormSubmitted(true);
       // only one event
       const event = calendarEvents[0];
       // formatted separately so they're not in an array
       const formatStart = format(event.start, 'yyyy-MM-dd HH:mm:ss');
-      const formatEnd =format (event.start, 'yyyy-MM-dd HH:mm:ss');
+      const formatEnd =format (event.end, 'yyyy-MM-dd HH:mm:ss');
       // checking if a user is insured
       const isInsured = insuranceName !== '' ? 1: 0;
       //checking length of symptom length
@@ -250,7 +250,7 @@ const Book_Appointment = () => {
       console.log("State: ", state);
       console.log("Zip Code: ", zipCode);
       console.log(formData);
-      //navigate =('/dashboard-patient');
+      //
 
 //////// testing
       try {
@@ -258,6 +258,7 @@ const Book_Appointment = () => {
           .post("http://localhost:8800/appointment", formData)
           .then(() => {
             alert("Appointment scheduled successfully!");
+            navigate(`/dashboard-patient/${user_id}/${patient_id}`);
           });
         console.log(response);
       } catch (error) {
@@ -285,10 +286,10 @@ const Book_Appointment = () => {
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={patient_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/patient-record">Patient Record</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/prescription">Prescription</Link></p>
-          <p><a className= "dashboard-link" href="#">Bill</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/patient-record/${user_id}/${patient_id}`}>Patient Record</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
           <p><a className= "dashboard-link" href="#">Payment</a></p>
       </div>
       
@@ -508,7 +509,7 @@ const Book_Appointment = () => {
               </div>
                           
               <button className= "schedule-appt-button" onClick={(e) => handleSubmit(e)}>Schedule Appointment</button>
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Go Back</Link></p>
         </div>
     </div>
     </form>

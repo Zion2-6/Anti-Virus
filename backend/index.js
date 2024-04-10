@@ -395,8 +395,13 @@ app.post('/login', (req,res) => {
                     if (roleQuery) {
                       // look for the array of users
                       db.query(roleQuery, [user.user_id], (err, dataRole) => {
-                        if(err || dataRole.length === 0){
-                          return res.status(500).json("Error finding role ID");
+                        if(err) {
+                          console.error("Database error finding role ID:", err);
+                          return res.status(500).json("Database error finding role ID");
+                        }
+                        if(dataRole.length === 0){
+                          console.error("No role ID found for user:", user.user_id);
+                          return res.status(404).json("Role ID not found for user");
                         } else {
                           // since patient, doctor, and receptionist are upper case
                           const lc_user_role = user.user_role.toLowerCase(); 
@@ -427,9 +432,11 @@ app.post('/login', (req,res) => {
 app.post('/appointment', handleCreateAppointment);
 
 app.post("/dashboard-doctor/prescription", (req,res) => {
-  const{doctor_id, patient, dosage, fee, additionalNotes} =req.body
-  const values = [doctor_id, patient, dosage, fee, additionalNotes];
-  const prescriptionQuery = "INSERT INTO prescription (`doctor_id`, `patient_id`, `dosage_desc`, `prescription_fee`, `additional_notes`) VALUES(?, ?, ?, ?, ?);"; 
+  const{doctor_id, patient, drug, dosage, fee, additionalNotes} =req.body
+  const values = [doctor_id, patient, drug, dosage, fee, additionalNotes];
+  console.log("Preparing to insert prescription data:", values);
+
+  const prescriptionQuery = "INSERT INTO prescription (`doctor_id`, `patient_id`,`medicine_name`, `dosage_desc`, `prescription_fee`, `additional_notes`) VALUES(?, ?, ?, ?, ?, ?);"; 
   db.query(prescriptionQuery, values, (err, response) => {
     if (err) {
       //error 

@@ -25,11 +25,11 @@ const Login = () => {
         console.log("Login successful with data:", data);
         // Use data to navigate
         if (data.user_role === 'Patient') {
-          navigate(`/dashboard-patient/book-appointment/${data.user_id}/${data.patient_id}`);
+          navigate(`/dashboard-patient/${data.user_id}/${data.patient_id}`);
         } else if (data.user_role === 'Doctor') {
-          navigate(`/dashboard-doctor/prescription/${data.user_id}/${data.doctor_id}`);
+          navigate(`/dashboard-doctor/${data.user_id}/${data.doctor_id}`);
         } else if (data.user_role === 'Receptionist') {
-          navigate(`/dashboard-receptionist/appointments/${data.user_id}/${data.receptionist_id}`);
+          navigate(`/dashboard-receptionist/${data.user_id}/${data.receptionist_id}`);
         }
       } catch (error) {
         console.error("Login error:", error.response || error);

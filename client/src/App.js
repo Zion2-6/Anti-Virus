@@ -41,18 +41,18 @@ function App() {
         <Route path= "/Calendar" element={<CalendarComponent/>}/>
         <Route path= "/book-appointment" element={<Home_Appointment/>}/>
         <Route path= "/dashboard-doctor/prescription/:user_id/:doctor_id" element={<Prescription_Doctor/>}/>
-        <Route path= "/dashboard-doctor/modify-prescription/" element={<All_Prescription/>}/>
-        <Route path= "/dashboard-patient/prescription/" element={<Prescription_Patient/>}/>
-        <Route path= "/dashboard-doctor/patient-records/" element={<Patient_Record_View_D/>}/>
-        <Route path= "/dashboard-patient/patient-record/" element={<Patient_Record_View_P/>}/>
-        <Route path= "/dashboard-receptionist/patient-records/" element={<Patient_Record_View_R/>}/>
-        <Route path= "/dashboard-doctor/appointments/" element={<Booking_View_D/>}/>
-        <Route path= "/dashboard-receptionist/appointments/" element={<Booking_View_R/>}/>
-        <Route path= "/dashboard-patient" element={<Dashboard_P/>}/>
-        <Route path= "/dashboard-doctor" element={<Dashboard_D/>}/>
-        <Route path= "/dashboard-receptionist" element={<Dashboard_R/>}/>
-        <Route path= "/billing-receptionist" element={<Billing_R/>}/>
-        <Route path= "/billing-patient" element={<Billing_P/>}/>
+        <Route path= "/dashboard-doctor/modify-prescription/:user_id/:doctor_id" element={<All_Prescription/>}/>
+        <Route path= "/dashboard-patient/prescription/:user_id/:patient_id" element={<Prescription_Patient/>}/>
+        <Route path= "/dashboard-doctor/patient-records/:user_id/:doctor_id" element={<Patient_Record_View_D/>}/>
+        <Route path= "/dashboard-patient/patient-record/:user_id/:patient_id" element={<Patient_Record_View_P/>}/>
+        <Route path= "/dashboard-receptionist/patient-records/:user_id/:receptionist_id" element={<Patient_Record_View_R/>}/>
+        <Route path= "/dashboard-doctor/appointments/:user_id/:doctor_id" element={<Booking_View_D/>}/>
+        <Route path= "/dashboard-receptionist/appointments/:user_id/:receptionist_id" element={<Booking_View_R/>}/>
+        <Route path= "/dashboard-patient/:user_id/:patient_id" element={<Dashboard_P/>}/>
+        <Route path= "/dashboard-doctor/:user_id/:doctor_id" element={<Dashboard_D/>}/>
+        <Route path= "/dashboard-receptionist/:user_id/:receptionist_id" element={<Dashboard_R/>}/>
+        <Route path= "/dashboard-receptionist/billing/:user_id/:receptionist_id" element={<Billing_R/>}/>
+        <Route path= "/dashboard-patient/bill/:user_id/:patient_id" element={<Billing_P/>}/>
 
 
       </Routes>

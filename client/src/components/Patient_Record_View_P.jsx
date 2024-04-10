@@ -9,8 +9,14 @@ import caduceus from './pictures/caduceus.png'
 import patient_icon from './pictures/patient.png'
 import folder_icon from './pictures/folder.png'
 import useDropDown from "./UseDropDown"
-
+import {useNavigate, useParams} from "react-router-dom"
+import './Dashboards.css';
+import logged_in_icon from './pictures/logged-in2.png'
 const Patient_Record_View_P = () => {
+
+   const{ user_id, patient_id } = useParams();
+   console.log(useParams());
+   console.log("user_id and patient_id from useParams:", user_id, patient_id);
    //another way of fetching data for patient
    const [patients, setPatients] = useState([]);
    useEffect(() =>{
@@ -51,18 +57,17 @@ const Patient_Record_View_P = () => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
       <img className = "dashboard-icon" src={patient_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/patient-record">Patient Record</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/book-appointment">Book an Appointment</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-patient/prescription">Prescription</Link></p>
-          <p><a className= "dashboard-link" href="#">Bill</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/patient-record/${user_id}/${patient_id}`}>Patient Record</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
           <p><a className= "dashboard-link" href="#">Payment</a></p>
       </div>
       
@@ -87,16 +92,17 @@ const Patient_Record_View_P = () => {
                     <img className="down-pic" src={down} alt="Down" />
                   </button>
                   <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
-                    {patients.map((patient) => (
-                      <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
-                        <span className="checkboxes">
-                          {/* Show checkmark if patient_id is selected */}
-                          <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                        </span>
-                        <span className="item-text">{patient.patient_id}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    {
+                      Array.isArray(patients) &&patients.map((patient) => (
+                        <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
+                          <span className="checkboxes">
+                            {/* Show checkmark if patient_id is selected */}
+                            <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                          </span>
+                          <span className="item-text">{patient.patient_id}</span>
+                        </li>
+                      ))}
+                    </ul>
                 </div>
               </div>
               </div>
@@ -197,7 +203,7 @@ const Patient_Record_View_P = () => {
                   </div>
                   </div>
               <div className= "space-for-go-back">      
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Go Back</Link></p>
             </div>
         </div>
     </div>

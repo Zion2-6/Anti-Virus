@@ -10,6 +10,8 @@ import down from './pictures/down.png'
 import prescription from './pictures/prescription.png'
 import doctor_icon from './pictures/doctor.png'
 import axios from 'axios'
+import logged_in_icon from './pictures/logged-in2.png'
+import './Dashboards.css';
 
 const Prescription_Doctor = () => {
   
@@ -61,7 +63,6 @@ const Prescription_Doctor = () => {
       
       }
 
-      const{ doctor_id } = useParams();
     //checks if form is submitted default is false
     const[formSubmitted, setFormSubmitted] = useState(false);
 
@@ -98,12 +99,14 @@ const Prescription_Doctor = () => {
      try {
       const response = await axios.post('http://localhost:8800/dashboard-doctor/prescription/', formData);
       console.log('Success:', response.data);
-      navigate("/");
+      navigate(`/dashboard-doctor/${user_id}/${doctor_id}`);
   } catch (error) {
       console.error('Error Message:', error);
   }
     };
-
+    const{ user_id, doctor_id } = useParams();
+    console.log(useParams());
+    console.log("user_id and patient_id from useParams:", user_id, doctor_id);
     return (
       <div className ="home">
         <form onSubmit={handleSubmit}>
@@ -113,18 +116,17 @@ const Prescription_Doctor = () => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/appointments">Appointments</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/modify-prescription">Modify Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/patient-records/${user_id}/${doctor_id}`}>Patient Records</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/appointments/${user_id}/${doctor_id}`}>Appointments</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/prescription/${user_id}/${doctor_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/modify-prescription/${user_id}/${doctor_id}`}> Modify Prescription</Link></p>
       </div>
       
       <div className= "gray-container">
@@ -224,7 +226,7 @@ const Prescription_Doctor = () => {
               
                           
               <button className= "prescrip-confirm-button" onClick={(e) => handleSubmit(e)}>Confirm</button>
-              <p><a className= "dashboard-link" href="#">Go Back</a></p>
+              <p><Link className="dashboard-link" to={`/dashboard-doctor/${user_id}/${doctor_id}`}>Go Back</Link></p>
         </div>
     </div>
     </form>

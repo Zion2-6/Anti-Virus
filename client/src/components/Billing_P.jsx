@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import './Signup.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams} from 'react-router-dom';
 
 const Billing_P = () => {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  const{ user_id, patient_id } = useParams();
+  console.log(useParams());
+  console.log("user_id and patient_id from useParams:", user_id, patient_id);
   const [values, setValues] = useState({
     patientId: '',
     fullName: '',
@@ -58,7 +61,7 @@ const Billing_P = () => {
         <div className="submission">
           <button className="create-acct-button">Proceed to Payment</button>
           <p className="cancel-link">
-            <Link className="shadowing" to="/">Cancel</Link>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Go Back</Link></p>
           </p>
         </div>
       </form>

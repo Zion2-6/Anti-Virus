@@ -5,18 +5,14 @@ import doctor_icon from './pictures/doctor.png';
 import record_icon from './pictures/folder.png';
 import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
-<<<<<<< HEAD
 import logged_in_icon from './pictures/logged-in2.png'
 import './Home.css'; // Make sure to import the updated CSS file
-=======
-import bill_icon from './pictures/payment.png';
-import payment_icon from './pictures/payment-protection.png';
-import './Home.css'; 
->>>>>>> 0106b3332ecfe164bfe73f5d000eea67c9b22a76
 import './Book_Appointment.css';
 import './Dashboards.css';
-
+import { useNavigate, useParams } from "react-router-dom";
 const Dashboard_D = () => {
+    const { user_id, doctor_id } = useParams();
+
     return (
         <div className="home">
             <div className="header">
@@ -32,25 +28,26 @@ const Dashboard_D = () => {
                 <div className="dashboard-container">
                     <img className = "dashboard-icon" src={doctor_icon}></img>
                     <p className = "dashboard-header">Dashboard</p>
-                    <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
-                    <p><Link className= "dashboard-link" to="/dashboard-doctor/appointments">Appointments</Link></p>
-                    <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription/:user_id/:doctor_id">Prescription</Link></p>
+                    <p><Link className="dashboard-link" to={`/dashboard-doctor/patient-records/${user_id}/${doctor_id}`}>Patient Records</Link></p>
+                    <p><Link className="dashboard-link" to={`/dashboard-doctor/appointments/${user_id}/${doctor_id}`}>Appointments</Link></p>
+                    <p><Link className="dashboard-link" to={`/dashboard-doctor/prescription/${user_id}/${doctor_id}`}>Prescription</Link></p>
+                    <p><Link className="dashboard-link" to={`/dashboard-doctor/modify-prescription/${user_id}/${doctor_id}`}> Modify Prescription</Link></p>
                 </div>
                 <div className="boxes-container">
                     <div className="box">
-                        <Link to="/dashboard-doctor/patient-records" className="box-content">
+                        <Link  to={`/dashboard-doctor/patient-records/${user_id}/${doctor_id}`} className="box-content">
                             <img className="box-image" src={record_icon} alt="Patient Records" />
                             <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Patient Records</div>
                         </Link>
                     </div>
                     <div className="box">
-                        <Link to="/dashboard-doctor/appointments" className="box-content">
+                        <Link to={`/dashboard-doctor/appointments/${user_id}/${doctor_id}`} className="box-content">
                             <img className="box-image" src={bookapp_icon} alt="Box 1 Image" />
                             <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Appointments</div>
                         </Link>
                     </div>
                     <div className="box">
-                        <Link to="/dashboard-doctor/prescription/:user_id/:doctor_id" className="box-content">
+                        <Link to={`/dashboard-doctor/prescription/${user_id}/${doctor_id}`} className="box-content">
                             <img className="box-image" src={prescription_icon} alt="Box 1 Image" />
                             <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Prescription</div>
                         </Link>

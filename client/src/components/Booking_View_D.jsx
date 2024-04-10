@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useNavigate, useParams} from "react-router-dom"
 import './Home.css'
 import './Book_Appointment.css'
 import './Booking_View_R.css'
@@ -13,7 +13,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-
+import logged_in_icon from './pictures/logged-in2.png'
+import './Dashboards.css';
 
 const Booking_View_D = () => {
 
@@ -91,6 +92,9 @@ useEffect(() => {
   
 
   }
+  const{ user_id, doctor_id } = useParams();
+  console.log(useParams());
+  console.log("user_id and patient_id from useParams:", user_id, doctor_id);
     return (
       <div className ="home">
         <div className= "header">
@@ -99,18 +103,17 @@ useEffect(() => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
       <div className = "dashboard-container">
           <img className = "dashboard-icon" src={doctor_icon}></img>
           <p className = "dashboard-header">Dashboard</p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/patient-records">Patient Records</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/appointments">Appointments</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/prescription">Prescription</Link></p>
-          <p><Link className= "dashboard-link" to="/dashboard-doctor/modify-prescription">Modify Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/patient-records/${user_id}/${doctor_id}`}>Patient Records</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/appointments/${user_id}/${doctor_id}`}>Appointments</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/prescription/${user_id}/${doctor_id}`}>Prescription</Link></p>
+          <p><Link className="dashboard-link" to={`/dashboard-doctor/modify-prescription/${user_id}/${doctor_id}`}> Modify Prescription</Link></p>
       </div>
       
       <div className= "blue-container">
@@ -214,7 +217,7 @@ useEffect(() => {
                 </div>
 
               
-              <div className="moving-go-back"><p><a className= "dashboard-link" href="#">Go Back</a></p></div>
+              <p><Link className="dashboard-link" to={`/dashboard-doctor/${user_id}/${doctor_id}`}>Go Back</Link></p>
         </div>
     </div>
  </div>   
