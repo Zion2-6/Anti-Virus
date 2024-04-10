@@ -17,3 +17,6 @@ How To Run Files
 6. For the backend terminal use the command: node index.js
 7. Missing packages? npm init or npm install <package_name>
 
+![image](https://github.com/leslyvv/IRLAnti-Virus/assets/148645895/7107def0-9643-462b-a750-4a6ac338c348)
+
+
