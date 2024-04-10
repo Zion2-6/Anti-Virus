@@ -24,6 +24,7 @@ import Dashboard_D from './components/Dashboard_D';
 import Dashboard_R from './components/Dashboard_R';
 import Billing_R from './components/Billing_R';
 import Billing_P from './components/Billing_P';
+import Payment from './components/Payment';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
         <Route path= "/dashboard-receptionist" element={<Dashboard_R/>}/>
         <Route path= "/billing-receptionist" element={<Billing_R/>}/>
         <Route path= "/billing-patient" element={<Billing_P/>}/>
+        <Route path= "/payment" element={<Payment/>}/>
 
 
       </Routes>
