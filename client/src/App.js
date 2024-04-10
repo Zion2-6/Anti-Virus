@@ -20,6 +20,7 @@ import Patient_Record_View_R from "./components/Patient_Record_View_R";
 import Booking_View_D from "./components/Booking_View_D";
 import Booking_View_R from "./components/Booking_View_R";
 import Dashboard_P from './components/Dashboard_P';
+import Dashboard_D from './components/Dashboard_D';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path= "/dashboard-doctor/appointments/" element={<Booking_View_D/>}/>
         <Route path= "/dashboard-receptionist/appointments/" element={<Booking_View_R/>}/>
         <Route path= "/dashboard-patient" element={<Dashboard_P/>}/>
+        <Route path= "/dashboard-doctor" element={<Dashboard_D/>}/>
 
 
       </Routes>
