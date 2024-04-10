@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react"
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useNavigate, useParams} from "react-router-dom"
+
+import axios from "axios";
+
 import './Home.css'
 import './Book_Appointment.css'
 import useDropDown from "./UseDropDown";
@@ -23,15 +26,15 @@ const Book_Appointment = () => {
 
   // setting selections
   const[selectedSymptoms, setSelectedSymptoms] =useState([]);
-  const[selectedGender, setSelectedGender] = useState('');
+  const[selectedGender, setSelectedGender] = useState("");
   // data for submitting book appointment
-  const [ssn, setSSN] = useState('');
-  const [medicalHistory, setMedicalHistory] = useState('');
-  const [insuranceName, setInsuranceName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
-  const [state, setState] = useState('');
-  const [zipCode, setZipCode] = useState('');
+  const [ssn, setSSN] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState("");
+  const [insuranceName, setInsuranceName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
   //usage of down down method to select items or an item in a list 
   const symptomDropDown = useDropDown();
   const specializationDropDown = useDropDown();
@@ -47,6 +50,11 @@ const Book_Appointment = () => {
   const [rooms, setRooms] = useState([]);
   const [symptoms, setSymptoms] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const { patient_id } = useParams();
+  const { user_id } = useParams();
+
+  console.log("Patient ID: ", patient_id);
+
   // fetch data
   useEffect(() =>{
       const getHospital = async ()=>{
@@ -118,21 +126,26 @@ const Book_Appointment = () => {
   //alows only one hospital selection alongside with it's location at a time
   const handleHospitalSelect = async (hospital_id) => {
     setSelectedHospitalId(hospital_id);
-    
+
     // variable assigned
     // look through hospitals that are fetched to return element if same id selected by patient
-    const hospital_selection = hospitals.find(hospital =>  hospital.hospital_id === hospital_id);
+    const hospital_selection = hospitals.find(
+      (hospital) => hospital.hospital_id === hospital_id
+    );
     setSelectedHospital(hospital_selection);
-    
+
     // new array with elements that make sure to check for room selection corresponding to hospital id
-    const rooms_selection = rooms.filter(room => room.hospital_id === hospital_id);
+    const rooms_selection = rooms.filter(
+      (room) => room.hospital_id === hospital_id
+    );
     setSelectedRoom(rooms_selection);
 
-     // new array with elements that make sure to check for doctor selection corresponding to hospital id
-     const doctors_selection = doctors.filter(doctor => doctor.hospital_id === hospital_id);
-      setSelectedSpecializations(doctors_selection);
-
-  }
+    // new array with elements that make sure to check for doctor selection corresponding to hospital id
+    const doctors_selection = doctors.filter(
+      (doctor) => doctor.hospital_id === hospital_id
+    );
+    setSelectedSpecializations(doctors_selection);
+  };
   // only one room selection at a time
   const handleRoomSelect = (room_number) =>{
     // ensure its in an array
@@ -198,9 +211,12 @@ const Book_Appointment = () => {
       const isInsured = insuranceName !== '' ? 1: 0;
       //checking length of symptom length
       const symptom_count = selectedSymptoms.length;
-      const { criticalLevel, isVIP } = determineCriticalLevelAndVIP(symptom_count);
+      const { criticalLevel, isVIP } = 
+      determineCriticalLevelAndVIP(symptom_count);
       console.log("Patient is insured: ", isInsured);
       const formData = {
+        patient_id,
+        user_id,
         symptoms: selectedSymptoms,
         severity_level: criticalLevel,
         isVIP,
@@ -235,6 +251,18 @@ const Book_Appointment = () => {
       console.log("Zip Code: ", zipCode);
       console.log(formData);
       //navigate =('/dashboard-patient');
+
+//////// testing
+      try {
+        const response = await axios
+          .post("http://localhost:8800/appointment", formData)
+          .then(() => {
+            alert("Appointment scheduled successfully!");
+          });
+        console.log(response);
+      } catch (error) {
+        console.log("Error submitting form: ", error);
+      }
 
     }
     
