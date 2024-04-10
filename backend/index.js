@@ -122,7 +122,7 @@ app.get("/patient_symptom", (req, res)=> {
     return res.json(data)
   })
 })
-//an array created called symptoms with objects: symptom_id, and symptom_name
+//an array created called symptoms with objects: symptom_id, and symptom_name for each patient
 //helps simplify pulling information
 app.get("/patient_prescription_info", (req, res)=> {
   const q = 
@@ -245,6 +245,48 @@ app.get("/full_appointment_info", (req, res)=> {
     return res.json(data)
   })
 })
+//find only one patient_record
+app.get("/patient_record/:user_id/:patient_id", (req, res) => {
+  
+  const { user_id, patient_id} = req.params;
+  const q = 
+  `
+  SELECT 
+    pe.first_name, 
+    pe.last_name, 
+    CONCAT(SUBSTRING(pe.phone_number, 1, 3), '-', SUBSTRING(pe.phone_number, 4, 3), '-', SUBSTRING(pe.phone_number, 7, 4)) AS phone_number,
+    DATE_FORMAT(pe.date_of_birth, '%Y-%m-%d') AS date_of_birth,
+    pe.age, 
+    pe.street_address, 
+    pe.state_address, 
+    pe.zipcode_address, 
+    p.patient_id, 
+    p.SSN, 
+    p.Gender, 
+    p.insurance_id, 
+    i.insurance_name, 
+    CASE WHEN p.isInsured = 1 THEN 'Yes' ELSE 'No' END as isInsured, 
+    p.severity_level, 
+    CASE WHEN p.isVIP = 1 THEN 'Yes' ELSE 'No' END as isVIP, 
+    p.medical_history
+  FROM patient p
+    JOIN person pe ON p.user_id = pe.user_id
+    LEFT JOIN insurance i ON p.insurance_id = i.insurance_id
+    WHERE p.user_id = ? AND p.patient_id = ?;`
+  db.query(q, [user_id, patient_id], (err, data) => {
+      if (err) {
+          console.error("Database query error:", err);
+          return res.json(err);
+          
+      }
+      //if data length is greater than 0 send the first data record in the array
+      if (data.length > 0) {
+        res.json(data[0]);
+      } else {
+        res.status(404).send("Patient record not found or access denied");
+      }
+  });
+});
 app.get("/patient_records", (req, res) => {
   const q = 
   `

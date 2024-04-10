@@ -22,27 +22,34 @@ const Patient_Record_View_P = () => {
    useEffect(() =>{
      const getPatient= async ()=>{
        try{
-           const res= await fetch('http://localhost:8800/patient_records');
+           const res= await fetch(`http://localhost:8800/patient_record/${user_id}/${patient_id}`);
            if(!res.ok){
                throw new Error('Network error')
            }
            const getData = await res.json();
            // debugging
            console.log(getData);
-           setPatients(getData);
+           //one patient as array
+           // still use maps to iterate through one element
+           setPatients([getData]);
          } catch (error) {
-           console.error("Couldn't fetch patients:", error);
+           console.error("Couldn't fetch patient:", error);
          }
        };
        getPatient();
-     }, []);
+       //passed as a dependency
+       // compares current value of dependency and the value on previous render
+     }, [user_id, patient_id]);
+
      // patient list  
      const patientDropDown = useDropDown();
      const[selectedPatient, setSelectedPatient] = useState([]);
      const[selectedPatientID, setSelectedPatientID] = useState(null);
+     
      //allows only one patient id selection with their first name,last name, and symptoms, 
      // var assigned through patients array to return element if same match
-     const handlePatientSelect =  async (patient_id) => {
+     //returns object after first match
+     const handlePatientSelect = (patient_id) => {
        setSelectedPatientID (patient_id);
        const patient_selection = patients.find((patient) =>
                                patient.patient_id === patient_id);
