@@ -190,33 +190,5 @@ a:visited,.shadowing:visited{
   text-shadow: 0px 0px 1px;
 }
 
-.boxes-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 10px;
-}
 
-.boxes-container .box {
-  width: 300px;
-  height: 150px;
-  background-color: #f0f0f0;
-  padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 50px;
-}
-
-.box-image {
-  width: 120px; 
-  height: 120px; 
-  display: flex;
-  flex-direction: row-reverse;
-  margin-top: 15px;
-}
-
-
-.box .box-content {
-  display: flex;
-  flex-direction: row;
-}
 

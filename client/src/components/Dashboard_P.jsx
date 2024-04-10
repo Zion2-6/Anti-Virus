@@ -7,8 +7,14 @@ import prescription_icon from './pictures/prescription.png';
 import bookapp_icon from './pictures/calendar.png';
 import bill_icon from './pictures/payment.png';
 import payment_icon from './pictures/payment-protection.png';
+<<<<<<< HEAD
+import logged_in_icon from './pictures/logged-in2.png'
+import './Home.css'; // Make sure to import the updated CSS file
+=======
 import './Home.css'; 
+>>>>>>> 0106b3332ecfe164bfe73f5d000eea67c9b22a76
 import './Book_Appointment.css';
+import './Dashboards.css';
 
 const Dashboard_P = () => {
     return (
@@ -19,8 +25,7 @@ const Dashboard_P = () => {
                     <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
                 </div>
                 <div className="right-section">
-                    <Link className="shadowing" to="/login">Log-in</Link><span className="stick-shadow"> |</span>
-                    <Link className="shadowing" to="/signup">Create an Account</Link>
+                <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
                 </div>
             </div>
             <div className="parent-container">
@@ -43,25 +48,25 @@ const Dashboard_P = () => {
                     <div className="box">
                         <Link to="/dashboard-patient/book-appointment/:user_id/:patient_id" className="box-content">
                             <img className="box-image" src={bookapp_icon} alt="Box 1 Image" />
-                            <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Book Appointment</div>
+                            <div style={{  fontSize: '20px', marginTop: '50px', marginLeft: '30px' }}>Book Appointment</div>
                         </Link>
                     </div>
                     <div className="box">
                         <Link to="/dashboard-patient/prescription/" className="box-content">
                             <img className="box-image" src={prescription_icon} alt="Box 1 Image" />
-                            <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Prescription</div>
+                            <div style={{  fontSize: '20px', marginTop: '50px', marginLeft: '30px' }}>Prescription</div>
                         </Link>
                     </div>
                     <div className="box">
                         <Link to="/dashboard-patient/" className="box-content">
                             <img className="box-image" src={bill_icon} alt="Box 1 Image" />
-                            <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Bill</div>
+                            <div style={{  fontSize: '20px', marginTop: '50px', marginLeft: '30px' }}>Bill</div>
                         </Link>
                     </div>
                     <div className="box">
                         <Link to="/dashboard-patient/" className="box-content">
                             <img className="box-image" src={payment_icon} alt="Box 1 Image" />
-                            <div style={{  fontSize: '20px', marginTop: '60px', marginLeft: '30px' }}>Payment</div>
+                            <div style={{  fontSize: '20px', marginTop: '50px', marginLeft: '30px' }}>Payment</div>
                         </Link>
                     </div>
                 </div>
