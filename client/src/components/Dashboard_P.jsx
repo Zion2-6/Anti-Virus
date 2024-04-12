@@ -40,7 +40,7 @@ const Dashboard_P = () => {
                     <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
                     <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
                     <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
-                    <p><a className="dashboard-link" href="#">Payment</a></p>
+                    <p><Link className="dashboard-link" to={`/dashboard-patient/payment/${user_id}/${patient_id}`}>Payment</Link></p>
                 </div>
                 <div className="boxes-container">
                     <div className="box">
@@ -68,7 +68,7 @@ const Dashboard_P = () => {
                         </Link>
                     </div>
                     <div className="box">
-                        <Link to={`/dashboard-patient/${user_id}/${patient_id}`} className="box-content">
+                        <Link to={`/dashboard-patient/payment/${user_id}/${patient_id}`} className="box-content">
                             <img className="box-image" src={payment_icon} alt="Box 1 Image" />
                             <div style={{  fontSize: '20px', marginTop: '50px', marginLeft: '30px' }}>Payment</div>
                         </Link>

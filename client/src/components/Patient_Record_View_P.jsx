@@ -56,6 +56,13 @@ const Patient_Record_View_P = () => {
        setSelectedPatient(patient_selection);
        
        }
+       useEffect(() => {
+        if (selectedPatient.first_name  && selectedPatient.last_name){
+          document.title = `${ selectedPatient.first_name } ${selectedPatient.last_name}`;
+        } else {
+          document.title = "React App";
+        }
+       }, [selectedPatient])
     return (
       <div className ="home">
         <div className= "header">
@@ -75,7 +82,7 @@ const Patient_Record_View_P = () => {
           <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
           <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
           <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
-          <p><a className= "dashboard-link" href="#">Payment</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/payment/${user_id}/${patient_id}`}>Payment</Link></p>
       </div>
       
       

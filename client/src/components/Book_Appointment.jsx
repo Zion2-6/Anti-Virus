@@ -11,6 +11,8 @@ import check from './pictures/check-2.png'
 import down from './pictures/down.png'
 import CalendarComponent from './CalendarComponent'
 import format from "date-fns/format";
+import './Dashboards.css';
+import logged_in_icon from './pictures/logged-in2.png'
 
 
 const Book_Appointment = () => {
@@ -278,8 +280,7 @@ const Book_Appointment = () => {
           <a href="/"><span className="website-name">IRL Anti-Virus</span></a>
         </div>
         <div className = "right-section">
-          <Link className= "shadowing" to="/login">Log-in</Link><span className= "stick-shadow"> |</span>
-          <Link className= "shadowing" to="/signup">Create an Account</Link>
+          <img className="logged-in-symbol" src={logged_in_icon} alt="logged_in" />
         </div>
       </div>
       <div className = "parent-container">
@@ -290,7 +291,7 @@ const Book_Appointment = () => {
           <p><Link className="dashboard-link" to={`/dashboard-patient/book-appointment/${user_id}/${patient_id}`}>Book an Appointment</Link></p>
           <p><Link className="dashboard-link" to={`/dashboard-patient/prescription/${user_id}/${patient_id}`}>Prescription</Link></p>
           <p><Link className="dashboard-link" to={`/dashboard-patient/bill/${user_id}/${patient_id}`}>Bill</Link></p>
-          <p><a className= "dashboard-link" href="#">Payment</a></p>
+          <p><Link className="dashboard-link" to={`/dashboard-patient/payment/${user_id}/${patient_id}`}>Payment</Link></p>
       </div>
       
       <div className= "blue-container">

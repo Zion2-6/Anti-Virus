@@ -54,7 +54,7 @@ function App() {
         <Route path= "/dashboard-receptionist/:user_id/:receptionist_id" element={<Dashboard_R/>}/>
         <Route path= "/dashboard-receptionist/billing/:user_id/:receptionist_id" element={<Billing_R/>}/>
         <Route path= "/dashboard-patient/bill/:user_id/:patient_id" element={<Billing_P/>}/>
-        <Route path= "/payment" element={<Payment/>}/>
+        <Route path= "/dashboard-patient/payment/:user_id/:patient_id" element={<Payment/>}/>
 
       </Routes>
     </div>

@@ -17,11 +17,14 @@ import logged_in_icon from './pictures/logged-in2.png'
 import './Dashboards.css';
 
 const Booking_View_D = () => {
+  const{ user_id, doctor_id } = useParams();
+  console.log(useParams());
+  console.log("user_id and patient_id from useParams:", user_id, doctor_id);
 
-moment.locale("en-US");
-const localizer = momentLocalizer(moment); 
+  moment.locale("en-US");
+  const localizer = momentLocalizer(moment); 
 
-const[calendarEvents, setCalendarEvents] = useState([]);
+  const[calendarEvents, setCalendarEvents] = useState([]);
 
  // Converting appointments data into calendar events
  const formatAppointmentsForCalendar = (appointments) => {
@@ -38,7 +41,7 @@ const[calendarEvents, setCalendarEvents] = useState([]);
 };
 
 useEffect(() => {
-  axios.get('http://localhost:8800/appointment')
+  axios.get(`http://localhost:8800/appointment/${user_id}`)
     .then(response => {
       const data = response.data;
       if (Array.isArray(data)) {
@@ -48,20 +51,24 @@ useEffect(() => {
         console.error("Data received is not an array:", data);
       }
     })
-    .catch(error => console.error(error));
-}, []);
+    .catch(error => console.error("Error fecthing appointments: "));
+}, [user_id]);
   //another way of fetching data for appointment
   const [appointments, setAppointments] = useState([]);
   useEffect (() =>{
     const getAppointment = async ()=>{
     try{
-      const res= await fetch('http://localhost:8800/full_appointment_info');
+      const res= await fetch(`http://localhost:8800/full_appointment_info/${user_id}`);
       if(!res.ok){
           throw new Error('Network error')
       }
       const getData= await res.json();
+      console.log("API appointment response data:", getData);
+      //check if data is an array or one object
+      const isDataArray = Array.isArray(getData);
+      const appointmentArray = isDataArray ? getData : [getData];
       // maps through the 
-      const parseDataObjects = getData.map(appointment =>({
+      const parseDataObjects = appointmentArray.map(appointment =>({
 
         ...appointment,
         //parsing the issue 
@@ -74,7 +81,7 @@ useEffect(() => {
      }
     }
       getAppointment();
-    }, []);
+    }, [user_id]);
 
   //dropdown for appointment
   const appointmentDropDown = useDropDown();
@@ -92,9 +99,7 @@ useEffect(() => {
   
 
   }
-  const{ user_id, doctor_id } = useParams();
-  console.log(useParams());
-  console.log("user_id and patient_id from useParams:", user_id, doctor_id);
+
     return (
       <div className ="home">
         <div className= "header">

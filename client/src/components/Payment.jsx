@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './Signup.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import check from './pictures/check-2.png';
 import down from './pictures/down.png';
 
 const Payment = () => {
     const navigate = useNavigate();
-
+    const{ user_id, patient_id } = useParams();
+    console.log(useParams());
+    console.log("user_id and patient_id from useParams:", user_id, patient_id);
     const [contactInfo, setContactInfo] = useState({
         fullName: '',
         phoneNumber: '',
@@ -52,7 +54,7 @@ const Payment = () => {
         setPaymentInfo((prev) => ({ ...prev, cardType }));
         setIsCardTypeOpen(false); // Close the dropdown after selection
     };
-
+    
     return (
         <div className="account-container2">
             <div className="account-header">Payment Page</div>
@@ -151,7 +153,7 @@ const Payment = () => {
                 <div className="submission">
                     <button className="create-acct-button">Complete and Pay</button>
                     <p className="cancel-link">
-                        <Link className="shadowing" to="/">Cancel</Link>
+                        <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Cancel</Link></p>
                     </p>
                 </div>
             </form>

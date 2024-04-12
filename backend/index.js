@@ -191,6 +191,53 @@ app.get("/appointment", (req, res) => {
       return res.json(data);
   });
 });
+//only the doctor can see the appointments specified to them
+app.get("/appointment/:user_id", (req, res) => {
+  const { user_id } = req.params;
+  console.log("Handling /appointment request for user_id: ", user_id);
+  
+  const doctorIDq = `SELECT doctor_id from doctor WHERE user_id = ?`;
+  const q = 
+  `
+  SELECT
+    a.appointment_id, 
+    a.patient_id, 
+    a.doctor_id, 
+    a.hospital_id,
+    a.room_number,
+    a.start_time,
+    a.end_time,
+    a.appointment_fee,
+    a.hospital_id,
+    p.user_id
+  FROM appointment a
+  JOIN doctor d ON a.doctor_id = d.doctor_id
+  JOIN person p ON d.user_id =p.user_id
+  WHERE a.doctor_id IN (?)
+  GROUP BY a.appointment_id
+  `
+  ;
+  // get all doctors for a user_id
+  db.query(doctorIDq, [user_id], (err, doctorResults) => {
+    if(err){
+      console.error("Database query error: ", err);
+      return res.status(500).json("Database issue");
+    }
+    if (doctorResults.length > 0){
+      const doctorIDs =doctorResults.map(doctor => doctor.doctor_id);
+    
+      db.query(q, [doctorIDs], (err, results) => {
+        if (err){
+          console.error("Database query error: ", err);
+          return res.status(500).json("Database issue");
+        }
+        res.json(results);
+      });
+  } else {
+    res.status(404).send("No doctors found for the user in the database.");
+  }
+});
+});
 app.get("/appointment_info", (req, res)=> {
   const q =
   `
@@ -245,6 +292,62 @@ app.get("/full_appointment_info", (req, res)=> {
     return res.json(data)
   })
 })
+//full appt info for doctors to only see their patients
+app.get("/full_appointment_info/:user_id", (req, res)=> {
+  const { user_id} = req.params;
+  console.log("User ID:", user_id);
+
+  const doctorIDq = `SELECT doctor_id from doctor WHERE user_id = ?`;
+  const q =
+  `SELECT 
+    a.appointment_id,
+    d.doctor_id,
+    doc.first_name AS doctor_first_name,
+    doc.last_name AS doctor_last_name,
+    p.patient_id,
+    pat.first_name AS patient_first_name,
+    pat.last_name AS patient_last_name,
+    p.medical_history,
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'symptom_id', s.symptom_id,
+            'symptom_name', s.symptom_name
+        )
+    ) AS symptoms
+  FROM appointment a
+    JOIN doctor d ON a.doctor_id = d.doctor_id
+    JOIN person doc ON d.user_id = doc.user_id
+    JOIN patient p ON a.patient_id = p.patient_id
+    JOIN person pat ON p.user_id = pat.user_id
+    LEFT JOIN patient_symptom ps ON p.patient_id = ps.patient_id
+    LEFT JOIN symptom s ON ps.symptom_id = s.symptom_id
+  WHERE a.doctor_id IN (?)
+  GROUP BY a.appointment_id;`
+
+   // get all doctors for a user_id
+  db.query(doctorIDq, [user_id], (err, doctorResults) => {
+    if(err){
+      console.error("Database query error: ", err);
+      return res.status(500).json("Database issue");
+    }
+    // checks if the results are more than 0
+    // takes results that are an array of objs
+    if (doctorResults.length > 0){
+      //creates a new array with just the doctor_ids
+      const doctorIDs =doctorResults.map(doctor => doctor.doctor_id);
+    
+      db.query(q, [doctorIDs], (err, results) => {
+        if (err){
+          console.error("Database query error: ", err);
+          return res.status(500).json("Database issue");
+        }
+        res.json(results);
+      });
+  } else {
+    res.status(404).send("No doctors found for the user in the database.");
+  }
+});
+});
 //find only one patient_record
 app.get("/patient_record/:user_id/:patient_id", (req, res) => {
   

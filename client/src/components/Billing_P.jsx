@@ -61,7 +61,7 @@ const Billing_P = () => {
         <div className="submission">
           <button className="create-acct-button">Proceed to Payment</button>
           <p className="cancel-link">
-          <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Go Back</Link></p>
+            <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Cancel</Link></p>
           </p>
         </div>
       </form>
