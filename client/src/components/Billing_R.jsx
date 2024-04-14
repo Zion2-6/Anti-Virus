@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Signup.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import useDropDown from "./UseDropDown"
+import check from './pictures/check-2.png'
+import down from './pictures/down.png'
 
 const Billing_R = () => {
   const navigate = useNavigate();
@@ -12,6 +15,37 @@ const Billing_R = () => {
 
   const [errors, setErrors] = useState({});
 
+  const [patients, setPatients] = useState([]);
+  useEffect(() => {
+    const getPatient = async () => {
+      try {
+        const res = await fetch('http://localhost:8800/patient_records');
+        if (!res.ok) {
+          throw new Error('Network error')
+        }
+        const getData = await res.json();
+        // debugging
+        console.log(getData);
+        setPatients(getData);
+      } catch (error) {
+        console.error("Couldn't fetch patients:", error);
+      }
+    };
+    getPatient();
+  }, []);
+  // patient list  
+  const patientDropDown = useDropDown();
+  const [selectedPatient, setSelectedPatient] = useState([]);
+  const [selectedPatientID, setSelectedPatientID] = useState(null);
+  //allows only one patient id selection with their first name,last name, and symptoms, 
+  // var assigned through patients array to return element if same match
+  const handlePatientSelect = async (patient_id) => {
+    setSelectedPatientID(patient_id);
+    const patient_selection = patients.find((patient) =>
+      patient.patient_id === patient_id);
+    setSelectedPatient(patient_selection);
+
+  }
   const handleInput = (e) => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -31,9 +65,27 @@ const Billing_R = () => {
       <form action="" onSubmit={handleSubmit}>
         <div className="form-header">Patient Information</div>
         <div className="account-info">
-          <div>
-            <label htmlFor="patientId">Patient ID:</label><br />
-            <input className="patient-id-box" type="text" name="patientId" onChange={handleInput} required />
+          <div className="bubbles1">
+            <p className="bubbles-header">
+              Patient ID:
+            </p>
+            <div className="patients-container">
+              <button type="button" className="select-patient" onClick={patientDropDown.toggleList}>
+                Select Patient
+                <img className="down-pic" src={down} alt="Down" />
+              </button>
+              <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
+                {patients.map((patient) => (
+                  <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
+                    <span className="checkboxes">
+                      {/* Show checkmark if patient_id is selected */}
+                      <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                    </span>
+                    <span className="item-text">{patient.patient_id}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div>
             <label htmlFor="fullName">Full Name:</label><br />
@@ -58,7 +110,7 @@ const Billing_R = () => {
         <div className="submission">
           <button className="create-acct-button">Confirm</button>
           <p className="cancel-link">
-          <Link className="dashboard-link" to={`/dashboard-receptionist/${user_id}/${receptionist_id}`}>Cancel</Link>
+            <Link className="dashboard-link" to={`/dashboard-receptionist/${user_id}/${receptionist_id}`}>Cancel</Link>
           </p>
         </div>
       </form>
