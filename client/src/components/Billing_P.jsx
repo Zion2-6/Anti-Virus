@@ -4,10 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useDropDown from "./UseDropDown"
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-import moment from 'moment'; // moment.js 추가
+import moment from 'moment';
 
 const Billing_P = () => {
-
   const navigate = useNavigate();
   const { user_id, patient_id } = useParams();
   console.log(useParams());
@@ -36,6 +35,7 @@ const Billing_P = () => {
     };
     getPatient();
   }, []);
+
   // patient list  
   const patientDropDown = useDropDown();
   const [selectedPatient, setSelectedPatient] = useState([]);
@@ -58,9 +58,9 @@ const Billing_P = () => {
         setPrescriptionFee(data.prescription_fee);
         setInsuranceCopay(data.insurance_copay);
 
-        const currentDate = moment().format('YYYY-MM-DD');
+        const currentDate = moment().format('MM-DD-YYYY');
         setBillDate(currentDate);
-        const dueDate = moment().add(5, 'days').format('YYYY-MM-DD');
+        const dueDate = moment().add(5, 'days').format('MM-DD-YYYY');
         setBillDue(dueDate);
       } catch (error) {
         console.error("Couldn't fetch billing info:", error);
@@ -108,12 +108,14 @@ const Billing_P = () => {
               </button>
               <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
                 {patients.map((patient) => (
-                  <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
-                    <span className="checkboxes">
-                      <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                    </span>
-                    <span className="item-text">{patient.patient_id}</span>
-                  </li>
+                  patient.patient_id === user_id && (
+                    <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
+                      <span className="checkboxes">
+                        <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                      </span>
+                      <span className="item-text">{patient.patient_id}</span>
+                    </li>
+                  )
                 ))}
               </ul>
             </div>
