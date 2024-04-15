@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useDropDown from "./UseDropDown"
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
-
+import moment from 'moment'; // moment.js 추가
 
 const Billing_P = () => {
 
@@ -40,25 +40,54 @@ const Billing_P = () => {
   const patientDropDown = useDropDown();
   const [selectedPatient, setSelectedPatient] = useState([]);
   const [selectedPatientID, setSelectedPatientID] = useState(null);
-  //allows only one patient id selection with their first name,last name, and symptoms, 
-  // var assigned through patients array to return element if same match
+  const [appointmentFee, setAppointmentFee] = useState(0);
+  const [prescriptionFee, setPrescriptionFee] = useState(0);
+  const [insuranceCopay, setInsuranceCopay] = useState(0);
+  const [billDate, setBillDate] = useState('');
+  const [billDue, setBillDue] = useState('');
+
+  useEffect(() => {
+    const getBillingInfo = async () => {
+      try {
+        const res = await fetch(`http://localhost:8800/billing_info/${selectedPatientID}`);
+        if (!res.ok) {
+          throw new Error('Network error')
+        }
+        const data = await res.json();
+        setAppointmentFee(data.appointment_fee);
+        setPrescriptionFee(data.prescription_fee);
+        setInsuranceCopay(data.insurance_copay);
+
+        const currentDate = moment().format('YYYY-MM-DD');
+        setBillDate(currentDate);
+        const dueDate = moment().add(5, 'days').format('YYYY-MM-DD');
+        setBillDue(dueDate);
+      } catch (error) {
+        console.error("Couldn't fetch billing info:", error);
+      }
+    };
+    if (selectedPatientID) {
+      getBillingInfo();
+    }
+  }, [selectedPatientID]);
+
   const handlePatientSelect = async (patient_id) => {
     setSelectedPatientID(patient_id);
     const patient_selection = patients.find((patient) =>
       patient.patient_id === patient_id);
     setSelectedPatient(patient_selection);
-
   }
+
   const handleInput = (e) => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const totalFee = appointmentFee + prescriptionFee - insuranceCopay;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validation logic can be added here if needed
     console.log('Patient ID:', values.patientId);
     console.log('Full Name:', values.fullName);
-    // Redirect logic after submission
     navigate('/login');
   };
 
@@ -81,7 +110,6 @@ const Billing_P = () => {
                 {patients.map((patient) => (
                   <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
                     <span className="checkboxes">
-                      {/* Show checkmark if patient_id is selected */}
                       <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                     </span>
                     <span className="item-text">{patient.patient_id}</span>
@@ -98,16 +126,16 @@ const Billing_P = () => {
         <div className="form-header">Summary</div>
         <div className="account-info">
           <div>
-            <p style={{ fontSize: '18px' }}>Appointment Fee: $100</p>
-            <p style={{ fontSize: '18px' }}>Prescription Fee: $50</p>
-            <p style={{ fontSize: '18px' }}>Insurance Copay: $20</p>
+            <p style={{ fontSize: '18px' }}>Appointment Fee: ${appointmentFee}</p>
+            <p style={{ fontSize: '18px' }}>Prescription Fee: ${prescriptionFee}</p>
+            <p style={{ fontSize: '18px' }}>Insurance Copay: ${insuranceCopay}</p>
           </div>
         </div>
-        <div className="form-header">Total Fee: </div>
+        <div className="form-header">Total Fee: ${totalFee}</div>
         <div className="account-info">
           <div>
-            <p style={{ fontSize: '18px' }}>Bill Date: </p>
-            <p style={{ fontSize: '18px' }}>Bill Due: $50</p>
+            <p style={{ fontSize: '18px' }}>Bill Date: {billDate}</p>
+            <p style={{ fontSize: '18px' }}>Bill Due: {billDue}</p>
           </div>
         </div>
         <div className="submission">
