@@ -20,11 +20,12 @@ const Billing_R = () => {
   useEffect(() => {
     const getPatient = async () => {
       try {
-        const res = await fetch('http://localhost:8800/patient_records');
+        const res = await fetch('http://localhost:8800/billing_infos');
         if (!res.ok) {
           throw new Error('Network error')
         }
         const getData = await res.json();
+        console.log(getData);
         setPatients(getData);
       } catch (error) {
         console.error("Couldn't fetch patients:", error);
@@ -96,9 +97,11 @@ const Billing_R = () => {
               </ul>
             </div>
           </div>
-          <div>
-            <label htmlFor="fullName">Full Name:</label><br />
-            <input className="full-name-box" type="text" name="fullName" onChange={handleInput} required />
+          <div className="bubbles2">
+            <p className="bubbles-header">
+              First Name: {selectedPatient && selectedPatient.first_name}
+              &nbsp; &nbsp; &nbsp; &nbsp; Last Name: {selectedPatient && selectedPatient.last_name}
+            </p>
           </div>
         </div>
         <div className="form-header">Summary</div>

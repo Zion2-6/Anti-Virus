@@ -21,12 +21,11 @@ const Billing_P = () => {
   useEffect(() => {
     const getPatient = async () => {
       try {
-        const res = await fetch('http://localhost:8800/patient_records');
+        const res = await fetch('http://localhost:8800/billing_infos');
         if (!res.ok) {
           throw new Error('Network error')
         }
         const getData = await res.json();
-        // debugging
         console.log(getData);
         setPatients(getData);
       } catch (error) {
@@ -113,16 +112,18 @@ const Billing_P = () => {
                       <span className="checkboxes">
                         <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                       </span>
-                      <span className="item-text">{patient.patient_id}</span>
+                      <span className="item-text">{patient.patient_id} - {patient.first_name} {patient.last_name}</span>
                     </li>
                   )
                 ))}
               </ul>
             </div>
           </div>
-          <div>
-            <label htmlFor="fullName">Full Name:</label><br />
-            <input className="full-name-box" type="text" name="fullName" onChange={handleInput} required />
+          <div className="bubbles2">
+            <p className="bubbles-header">
+              First Name: {selectedPatient && selectedPatient.first_name}
+              &nbsp; &nbsp; &nbsp; &nbsp; Last Name: {selectedPatient && selectedPatient.last_name}
+            </p>
           </div>
         </div>
         <div className="form-header">Summary</div>
