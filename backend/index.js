@@ -406,9 +406,9 @@ app.get("/billing_info/:user_id/:patient_id", (req, res) => {
   FROM patient p
     JOIN person pe ON p.user_id = pe.user_id
     JOIN appointment a ON p.patient_id = a.patient_id
-    JOIN prescription pr ON p.patient_id = pr.patient_id
+    JOIN prescription pr ON a.patient_id = pr.patient_id
     LEFT JOIN insurance i ON p.insurance_id = i.insurance_id
-    WHERE p.user_id = ? AND p.patient_id = ?;`
+    GROUP BY p.patient_id, pe.first_name, pe.last_name;`
   db.query(q, [user_id, patient_id], (err, data) => {
     if (err) {
       console.error("Database query error:", err);
@@ -469,8 +469,9 @@ app.get("/billing_infos", (req, res) => {
   FROM patient p
     JOIN person pe ON p.user_id = pe.user_id
     JOIN appointment a ON p.patient_id = a.patient_id
-    JOIN prescription pr ON p.patient_id = pr.patient_id
-    LEFT JOIN insurance i ON p.insurance_id = i.insurance_id;`
+    JOIN prescription pr ON a.patient_id = pr.patient_id
+    LEFT JOIN insurance i ON p.insurance_id = i.insurance_id
+    GROUP BY p.patient_id, pe.first_name, pe.last_name;`
   db.query(q, (err, data) => {
     if (err) {
       console.error("Database query error:", err);

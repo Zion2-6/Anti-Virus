@@ -15,8 +15,17 @@ const Billing_R = () => {
   });
 
   const [errors, setErrors] = useState({});
-
   const [patients, setPatients] = useState([]);
+
+  const patientDropDown = useDropDown();
+  const [selectedPatient, setSelectedPatient] = useState([]);
+  const [selectedPatientID, setSelectedPatientID] = useState(null);
+  const [appointmentFee, setAppointmentFee] = useState(100);
+  const [prescriptionFee, setPrescriptionFee] = useState(50);
+  const [insuranceCopay, setInsuranceCopay] = useState(20);
+  const [billDate, setBillDate] = useState('');
+  const [billDue, setBillDue] = useState('');
+
   useEffect(() => {
     const getPatient = async () => {
       try {
@@ -27,21 +36,21 @@ const Billing_R = () => {
         const getData = await res.json();
         console.log(getData);
         setPatients(getData);
+        // appointmentFee
+        const appointmentFee = getData.length > 0 ? getData[0].appointment_fee : 0;
+        setAppointmentFee(appointmentFee);
+        // prescriptionFee
+        const prescriptionFee = getData.length > 0 ? getData[0].prescription_fee : 0;
+        setPrescriptionFee(prescriptionFee);
+        // insuranceCopay
+        const insuranceCopay = getData.length > 0 ? getData[0].co_pay : 0;
+        setInsuranceCopay(insuranceCopay);
       } catch (error) {
         console.error("Couldn't fetch patients:", error);
       }
     };
     getPatient();
   }, []);
-
-  const patientDropDown = useDropDown();
-  const [selectedPatient, setSelectedPatient] = useState([]);
-  const [selectedPatientID, setSelectedPatientID] = useState(null);
-  const [appointmentFee, setAppointmentFee] = useState(100);
-  const [prescriptionFee, setPrescriptionFee] = useState(50);
-  const [insuranceCopay, setInsuranceCopay] = useState(20);
-  const [billDate, setBillDate] = useState('');
-  const [billDue, setBillDue] = useState('');
 
   useEffect(() => {
     const currentDate = moment().format('MM-DD-YYYY');
@@ -61,7 +70,7 @@ const Billing_R = () => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const totalFee = appointmentFee + prescriptionFee - insuranceCopay;
+  const totalFee = Math.max(appointmentFee + prescriptionFee - insuranceCopay, 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();

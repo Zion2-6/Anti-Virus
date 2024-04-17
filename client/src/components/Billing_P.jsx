@@ -8,9 +8,7 @@ import moment from 'moment';
 
 const Billing_P = () => {
   const navigate = useNavigate();
-  const { user_id, patient_id } = useParams();
-  console.log(useParams());
-  console.log("user_id and patient_id from useParams:", user_id, patient_id);
+  const { user_id, receptionist_id } = useParams();
   const [values, setValues] = useState({
     patientId: '',
     fullName: '',
@@ -18,6 +16,16 @@ const Billing_P = () => {
 
   const [errors, setErrors] = useState({});
   const [patients, setPatients] = useState([]);
+
+  const patientDropDown = useDropDown();
+  const [selectedPatient, setSelectedPatient] = useState([]);
+  const [selectedPatientID, setSelectedPatientID] = useState(null);
+  const [appointmentFee, setAppointmentFee] = useState(100);
+  const [prescriptionFee, setPrescriptionFee] = useState(50);
+  const [insuranceCopay, setInsuranceCopay] = useState(20);
+  const [billDate, setBillDate] = useState('');
+  const [billDue, setBillDue] = useState('');
+
   useEffect(() => {
     const getPatient = async () => {
       try {
@@ -28,6 +36,15 @@ const Billing_P = () => {
         const getData = await res.json();
         console.log(getData);
         setPatients(getData);
+        // appointmentFee
+        const appointmentFee = getData.length > 0 ? getData[0].appointment_fee : 0;
+        setAppointmentFee(appointmentFee);
+        // prescriptionFee
+        const prescriptionFee = getData.length > 0 ? getData[0].prescription_fee : 0;
+        setPrescriptionFee(prescriptionFee);
+        // insuranceCopay
+        const insuranceCopay = getData.length > 0 ? getData[0].co_pay : 0;
+        setInsuranceCopay(insuranceCopay);
       } catch (error) {
         console.error("Couldn't fetch patients:", error);
       }
@@ -35,40 +52,12 @@ const Billing_P = () => {
     getPatient();
   }, []);
 
-  // patient list  
-  const patientDropDown = useDropDown();
-  const [selectedPatient, setSelectedPatient] = useState([]);
-  const [selectedPatientID, setSelectedPatientID] = useState(null);
-  const [appointmentFee, setAppointmentFee] = useState(0);
-  const [prescriptionFee, setPrescriptionFee] = useState(0);
-  const [insuranceCopay, setInsuranceCopay] = useState(0);
-  const [billDate, setBillDate] = useState('');
-  const [billDue, setBillDue] = useState('');
-
   useEffect(() => {
-    const getBillingInfo = async () => {
-      try {
-        const res = await fetch(`http://localhost:8800/billing_info/${selectedPatientID}`);
-        if (!res.ok) {
-          throw new Error('Network error')
-        }
-        const data = await res.json();
-        setAppointmentFee(data.appointment_fee);
-        setPrescriptionFee(data.prescription_fee);
-        setInsuranceCopay(data.insurance_copay);
-
-        const currentDate = moment().format('MM-DD-YYYY');
-        setBillDate(currentDate);
-        const dueDate = moment().add(5, 'days').format('MM-DD-YYYY');
-        setBillDue(dueDate);
-      } catch (error) {
-        console.error("Couldn't fetch billing info:", error);
-      }
-    };
-    if (selectedPatientID) {
-      getBillingInfo();
-    }
-  }, [selectedPatientID]);
+    const currentDate = moment().format('MM-DD-YYYY');
+    setBillDate(currentDate);
+    const dueDate = moment().add(5, 'days').format('MM-DD-YYYY');
+    setBillDue(dueDate);
+  }, []);
 
   const handlePatientSelect = async (patient_id) => {
     setSelectedPatientID(patient_id);
@@ -81,13 +70,13 @@ const Billing_P = () => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const totalFee = appointmentFee + prescriptionFee - insuranceCopay;
+  const totalFee = Math.max(appointmentFee + prescriptionFee - insuranceCopay, 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Patient ID:', values.patientId);
     console.log('Full Name:', values.fullName);
-    navigate('/login');
+    navigate('/billing-patient');
   };
 
   return (
@@ -107,14 +96,12 @@ const Billing_P = () => {
               </button>
               <ul className="list-items" style={{ display: patientDropDown.isOpen ? 'block' : 'none' }}>
                 {patients.map((patient) => (
-                  patient.patient_id === user_id && (
-                    <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
-                      <span className="checkboxes">
-                        <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
-                      </span>
-                      <span className="item-text">{patient.patient_id} - {patient.first_name} {patient.last_name}</span>
-                    </li>
-                  )
+                  <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
+                    <span className="checkboxes">
+                      <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
+                    </span>
+                    <span className="item-text">{patient.patient_id}</span>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -142,9 +129,9 @@ const Billing_P = () => {
           </div>
         </div>
         <div className="submission">
-          <button className="create-acct-button">Proceed to Payment</button>
+          <button className="create-acct-button">Confirm</button>
           <p className="cancel-link">
-            <p><Link className="dashboard-link" to={`/dashboard-patient/${user_id}/${patient_id}`}>Cancel</Link></p>
+            <Link className="dashboard-link" to={`/dashboard-receptionist/${user_id}/${receptionist_id}`}>Cancel</Link>
           </p>
         </div>
       </form>
