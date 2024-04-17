@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useDropDown from "./UseDropDown"
 import check from './pictures/check-2.png'
 import down from './pictures/down.png'
+import moment from 'moment';
 
 const Billing_R = () => {
   const navigate = useNavigate();
@@ -14,48 +15,70 @@ const Billing_R = () => {
   });
 
   const [errors, setErrors] = useState({});
-
   const [patients, setPatients] = useState([]);
+
+  const patientDropDown = useDropDown();
+  const [selectedPatient, setSelectedPatient] = useState([]);
+  const [selectedPatientID, setSelectedPatientID] = useState(null);
+  const [appointmentFee, setAppointmentFee] = useState(100);
+  const [prescriptionFee, setPrescriptionFee] = useState(50);
+  const [insuranceCopay, setInsuranceCopay] = useState(20);
+  const [billDate, setBillDate] = useState('');
+  const [billDue, setBillDue] = useState('');
+
   useEffect(() => {
     const getPatient = async () => {
       try {
-        const res = await fetch('http://localhost:8800/patient_records');
+        const res = await fetch('http://localhost:8800/billing_infos');
         if (!res.ok) {
           throw new Error('Network error')
         }
         const getData = await res.json();
-        // debugging
         console.log(getData);
         setPatients(getData);
+        // appointmentFee
+        const appointmentFee = getData.length > 0 ? getData[0].appointment_fee : 0;
+        setAppointmentFee(appointmentFee);
+        // prescriptionFee
+        const prescriptionFee = getData.length > 0 ? getData[0].prescription_fee : 0;
+        setPrescriptionFee(prescriptionFee);
+        // insuranceCopay
+        const insuranceCopay = getData.length > 0 ? getData[0].co_pay : 0;
+        setInsuranceCopay(insuranceCopay);
       } catch (error) {
         console.error("Couldn't fetch patients:", error);
       }
     };
     getPatient();
   }, []);
-  // patient list  
-  const patientDropDown = useDropDown();
-  const [selectedPatient, setSelectedPatient] = useState([]);
-  const [selectedPatientID, setSelectedPatientID] = useState(null);
-  //allows only one patient id selection with their first name,last name, and symptoms, 
-  // var assigned through patients array to return element if same match
+
+  useEffect(() => {
+    const currentDate = moment().format('MM-DD-YYYY');
+    setBillDate(currentDate);
+    const dueDate = moment().add(5, 'days').format('MM-DD-YYYY');
+    setBillDue(dueDate);
+  }, []);
+
   const handlePatientSelect = async (patient_id) => {
     setSelectedPatientID(patient_id);
     const patient_selection = patients.find((patient) =>
       patient.patient_id === patient_id);
     setSelectedPatient(patient_selection);
-
+    setAppointmentFee(patient_selection.appointment_fee);
+    setPrescriptionFee(patient_selection.prescription_fee);
+    setInsuranceCopay(patient_selection.co_pay);
   }
+
   const handleInput = (e) => {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const totalFee = Math.max(appointmentFee + prescriptionFee - insuranceCopay, 0);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validation logic can be added here if needed
     console.log('Patient ID:', values.patientId);
     console.log('Full Name:', values.fullName);
-    // Redirect logic after submission
     navigate('/billing-patient');
   };
 
@@ -78,7 +101,6 @@ const Billing_R = () => {
                 {patients.map((patient) => (
                   <li key={patient.patient_id} className="item" onClick={() => handlePatientSelect(patient.patient_id)}>
                     <span className="checkboxes">
-                      {/* Show checkmark if patient_id is selected */}
                       <img className={`check-pic ${selectedPatientID === patient.patient_id ? '' : 'check-pic-hidden'}`} src={check} alt="Check" width="10" height="10" />
                     </span>
                     <span className="item-text">{patient.patient_id}</span>
@@ -87,24 +109,26 @@ const Billing_R = () => {
               </ul>
             </div>
           </div>
-          <div>
-            <label htmlFor="fullName">Full Name:</label><br />
-            <input className="full-name-box" type="text" name="fullName" onChange={handleInput} required />
+          <div className="bubbles2">
+            <p className="bubbles-header">
+              First Name: {selectedPatient && selectedPatient.first_name}
+              &nbsp; &nbsp; &nbsp; &nbsp; Last Name: {selectedPatient && selectedPatient.last_name}
+            </p>
           </div>
         </div>
         <div className="form-header">Summary</div>
         <div className="account-info">
           <div>
-            <p style={{ fontSize: '18px' }}>Appointment Fee: $100</p>
-            <p style={{ fontSize: '18px' }}>Prescription Fee: $50</p>
-            <p style={{ fontSize: '18px' }}>Insurance Copay: $20</p>
+            <p style={{ fontSize: '18px' }}>Appointment Fee: ${appointmentFee}</p>
+            <p style={{ fontSize: '18px' }}>Prescription Fee: ${prescriptionFee}</p>
+            <p style={{ fontSize: '18px' }}>Insurance Copay: ${insuranceCopay}</p>
           </div>
         </div>
-        <div className="form-header">Total Fee: </div>
+        <div className="form-header">Total Fee: ${totalFee}</div>
         <div className="account-info">
           <div>
-            <p style={{ fontSize: '18px' }}>Bill Date: </p>
-            <p style={{ fontSize: '18px' }}>Bill Due: $50</p>
+            <p style={{ fontSize: '18px' }}>Bill Date: {billDate}</p>
+            <p style={{ fontSize: '18px' }}>Bill Due: {billDue}</p>
           </div>
         </div>
         <div className="submission">
