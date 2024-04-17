@@ -148,11 +148,11 @@ app.get("/patient_prescription_info", (req, res) => {
     return res.json(data)
   })
 })
-
-app.get("/patient_prescription_info_fetch", (req, res) => {
+app.get("/all_patient_prescription_info_fetch", (req, res) => {
+  
   const q =
     `
-  SELECT 
+    SELECT 
     p.patient_id,
     pe.first_name AS patient_first_name, 
     pe.last_name AS patient_last_name,
@@ -164,8 +164,31 @@ app.get("/patient_prescription_info_fetch", (req, res) => {
   FROM patient p
     JOIN person pe ON p.user_id = pe.user_id
     LEFT JOIN prescription pr ON p.patient_id = pr.patient_id
-    ORDER BY p.patient_id;`
+    ORDER BY p.patient_id`
   db.query(q, (err, data) => {
+    if (err) return res.json(err)
+    return res.json(data)
+  })
+})
+app.get("/patient_prescription_info_fetch/:user_id/:patient_id", (req, res) => {
+  const { user_id, patient_id } =req.params;
+  const q =
+    `
+  SELECT 
+    p.patient_id,
+    pe.user_id,
+    pe.first_name AS patient_first_name, 
+    pe.last_name AS patient_last_name,
+    pr.prescription_id,
+    pr.medicine_name,
+    pr.dosage_desc,
+    pr.prescription_fee,
+    pr.additional_notes
+  FROM patient p
+    JOIN person pe ON p.user_id = pe.user_id
+    LEFT JOIN prescription pr ON p.patient_id = pr.patient_id
+    WHERE pe.user_id = ? AND p.patient_id = ?;`
+  db.query(q, [user_id, patient_id ], (err, data) => {
     if (err) return res.json(err)
     return res.json(data)
   })
