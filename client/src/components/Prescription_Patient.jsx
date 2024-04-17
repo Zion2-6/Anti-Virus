@@ -24,13 +24,13 @@ const Prescription_Patient = () => {
     const[fee, setFee] = useState('');
     const[additionalNotes, setNotes] = useState('');
     
-    
+  
     //another way of fetching data for appointment
   const [patients, setPatients] = useState([]);
   useEffect(() =>{
     const getPatient= async ()=>{
       try{
-          const res= await fetch('http://localhost:8800/patient_prescription_info_fetch');
+          const res= await fetch(`http://localhost:8800/patient_prescription_info_fetch/${user_id}/${patient_id}`);
           if(!res.ok){
               throw new Error('Network error')
           }

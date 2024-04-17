@@ -26,7 +26,7 @@ const All_Prescription = () => {
   useEffect(() =>{
     const getPatient= async ()=>{
       try{
-          const res= await fetch('http://localhost:8800/patient_prescription_info_fetch');
+          const res= await fetch('http://localhost:8800/all_patient_prescription_info_fetch');
           if(!res.ok){
               throw new Error('Network error')
           }
