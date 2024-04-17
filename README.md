@@ -19,4 +19,3 @@ How To Run Files
 
 ![image](https://github.com/leslyvv/IRLAnti-Virus/assets/148645895/7107def0-9643-462b-a750-4a6ac338c348)
 
-
