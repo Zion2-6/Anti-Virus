@@ -64,6 +64,9 @@ const Billing_P = () => {
     const patient_selection = patients.find((patient) =>
       patient.patient_id === patient_id);
     setSelectedPatient(patient_selection);
+    setAppointmentFee(patient_selection.appointment_fee);
+    setPrescriptionFee(patient_selection.prescription_fee);
+    setInsuranceCopay(patient_selection.co_pay);
   }
 
   const handleInput = (e) => {
